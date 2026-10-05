@@ -77,6 +77,7 @@ export function computeReachabilityProbability(
     }
 
     if (maxDelta < tolerance) {
+      console.log("has conv");
       converged = true;
       iterations += 1;
       break;
@@ -103,6 +104,8 @@ export function computeReachabilityProbability(
     }
     policy[state.id] = bestAction ? bestAction.id : null;
   }
+
+  console.log(probabilities)
 
   return { probabilities, policy, iterations, converged };
 }

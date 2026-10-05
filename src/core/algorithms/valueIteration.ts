@@ -21,11 +21,6 @@ function expectedActionValue(
   return expectedValue;
 }
 
-/**
- * Computes the optimal (reward-maximizing) policy via standard MDP value
- * iteration: V(s) = max_a sum_s' P(s'|s,a) * (R(s,a,s') + gamma * V(s')).
- * A state with no actions is treated as absorbing with value 0.
- */
 export function computeOptimalPolicy(
   states: MDPState[],
   actions: MDPAction[],

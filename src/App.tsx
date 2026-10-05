@@ -7,6 +7,7 @@ import { PoliciesPanel } from './components/sidebar/PoliciesPanel';
 import { ProbabilitiesPanel } from './components/sidebar/ProbabilitiesPanel';
 import { useMDP, DEFAULT_NODE_SIZE } from './hooks/useMDP';
 import { exportMDPToFile, importMDPFromFile } from './core/serializers/jsonSerializer';
+import { exportMDPToMiniZincDzn } from './core/serializers/minizincSerializer';
 
 function App() {
   const {
@@ -51,6 +52,14 @@ function App() {
       window.alert(error instanceof Error ? error.message : 'Failed to save the MDP file.');
     }
   }, [states, actions, transitions, nodePositions, title, nodeSizes, actionPositions]);
+
+  const handleExportMiniZinc = useCallback(async () => {
+    try {
+      await exportMDPToMiniZincDzn(states, actions, transitions, title);
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Failed to export the MiniZinc data file.');
+    }
+  }, [states, actions, transitions, title]);
 
   const handleOpen = useCallback(
     async (file: File) => {
@@ -178,7 +187,12 @@ function App() {
           />
         </div>
 
-        <ToolbarPanel onSave={handleSave} onOpen={handleOpen} onReset={handleReset} />
+        <ToolbarPanel
+          onSave={handleSave}
+          onOpen={handleOpen}
+          onReset={handleReset}
+          onExportMiniZinc={handleExportMiniZinc}
+        />
 
         <PoliciesPanel
           states={states}

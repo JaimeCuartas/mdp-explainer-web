@@ -1,0 +1,176 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Energy Harvesting Sensor Node",
+    "updatedAt": "2026-09-30T02:55:34.734Z"
+  },
+  "logical": {
+    "states": [
+      {
+        "id": "s_low",
+        "label": "\\text{Low\\,Battery}",
+        "isInitial": true
+      },
+      {
+        "id": "s_charged",
+        "label": "\\text{Charged}"
+      },
+      {
+        "id": "s_drained",
+        "label": "\\text{Drained\\,(Fail)}",
+        "isTargetEffect": true
+      }
+    ],
+    "actions": [
+      {
+        "id": "a_low_harvest",
+        "label": "harvest",
+        "sourceStateId": "s_low"
+      },
+      {
+        "id": "a_low_transmit",
+        "label": "transmit\\,risky",
+        "sourceStateId": "s_low"
+      },
+      {
+        "id": "a_charged_transmit",
+        "label": "transmit",
+        "sourceStateId": "s_charged"
+      }
+    ],
+    "transitions": [
+      {
+        "id": "t1",
+        "actionId": "a_low_harvest",
+        "targetStateId": "s_charged",
+        "probability": 0.8
+      },
+      {
+        "id": "t2",
+        "actionId": "a_low_harvest",
+        "targetStateId": "s_low",
+        "probability": 0.2,
+        "waypoints": [
+          {
+            "x": 346.5,
+            "y": 52.3125
+          }
+        ]
+      },
+      {
+        "id": "t3",
+        "actionId": "a_low_transmit",
+        "targetStateId": "s_low",
+        "probability": 0.4,
+        "waypoints": [
+          {
+            "x": 121.5,
+            "y": 268.0625
+          },
+          {
+            "x": 122,
+            "y": 24.5625
+          },
+          {
+            "x": 210.75,
+            "y": 26.3125
+          }
+        ],
+        "reward": 4
+      },
+      {
+        "id": "t4",
+        "actionId": "a_low_transmit",
+        "targetStateId": "s_drained",
+        "probability": 0.6,
+        "reward": 1
+      },
+      {
+        "id": "t5",
+        "actionId": "a_charged_transmit",
+        "targetStateId": "s_low",
+        "probability": 0.9,
+        "waypoints": [
+          {
+            "x": 404.25,
+            "y": 274.8125
+          },
+          {
+            "x": 403.25,
+            "y": 27.3125
+          },
+          {
+            "x": 211.25,
+            "y": 25.8125
+          }
+        ],
+        "reward": 1
+      },
+      {
+        "id": "t6",
+        "actionId": "a_charged_transmit",
+        "targetStateId": "s_drained",
+        "probability": 0.1,
+        "reward": 1
+      }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s_low": {
+        "id": "s_low",
+        "position": {
+          "x": 173.5,
+          "y": 54.5625
+        },
+        "size": {
+          "width": 76,
+          "height": 50
+        }
+      },
+      "s_charged": {
+        "id": "s_charged",
+        "position": {
+          "x": 296,
+          "y": 172
+        },
+        "size": {
+          "width": 101,
+          "height": 50
+        }
+      },
+      "s_drained": {
+        "id": "s_drained",
+        "position": {
+          "x": 239,
+          "y": 323.5
+        },
+        "size": {
+          "width": 86,
+          "height": 50
+        }
+      },
+      "a_low_harvest": {
+        "id": "a_low_harvest",
+        "position": {
+          "x": 337.5,
+          "y": 111
+        }
+      },
+      "a_low_transmit": {
+        "id": "a_low_transmit",
+        "position": {
+          "x": 203.5,
+          "y": 250.5
+        }
+      },
+      "a_charged_transmit": {
+        "id": "a_charged_transmit",
+        "position": {
+          "x": 336,
+          "y": 255
+        }
+      }
+    }
+  }
+}

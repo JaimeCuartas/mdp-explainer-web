@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Icy Gridworld Cliff",
+    "updatedAt": "2026-09-29T10:00:00.000Z"
+  },
+  "logical": {
+    "states": [
+      { "id": "s_start", "label": "\\text{Start}", "isInitial": true },
+      { "id": "s_ice", "label": "\\text{Icy\\,Tile}" },
+      { "id": "s_cliff", "label": "\\text{Cliff\\,(Fail)}" },
+      { "id": "s_goal", "label": "\\text{Goal}" }
+    ],
+    "actions": [
+      { "id": "a_start_fast", "label": "dash\\,east", "sourceStateId": "s_start" },
+      { "id": "a_start_safe", "label": "walk\\,safe", "sourceStateId": "s_start" },
+      { "id": "a_ice_cross", "label": "cross\\,ice", "sourceStateId": "s_ice" }
+    ],
+    "transitions": [
+      { "id": "t1", "actionId": "a_start_fast", "targetStateId": "s_ice", "probability": 0.7 },
+      { "id": "t2", "actionId": "a_start_fast", "targetStateId": "s_cliff", "probability": 0.3 },
+      { "id": "t3", "actionId": "a_start_safe", "targetStateId": "s_ice", "probability": 1.0 },
+      { "id": "t4", "actionId": "a_ice_cross", "targetStateId": "s_goal", "probability": 0.8 },
+      { "id": "t5", "actionId": "a_ice_cross", "targetStateId": "s_cliff", "probability": 0.2 }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s_start": { "id": "s_start", "position": { "x": 100, "y": 100 } },
+      "s_ice": { "id": "s_ice", "position": { "x": 300, "y": 100 } },
+      "s_cliff": { "id": "s_cliff", "position": { "x": 200, "y": 300 } },
+      "s_goal": { "id": "s_goal", "position": { "x": 500, "y": 100 } },
+      "a_start_fast": { "id": "a_start_fast", "position": { "x": 200, "y": 180 } },
+      "a_start_safe": { "id": "a_start_safe", "position": { "x": 200, "y": 60 } },
+      "a_ice_cross": { "id": "a_ice_cross", "position": { "x": 400, "y": 200 } }
+    }
+  }
+}

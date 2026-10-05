@@ -1,29 +1,8 @@
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import type { MDPFileFormat, MDPVisualNode } from '../../types/fileFormat';
+import { saveTextToFile, sanitizeFileName } from './fileSaver';
 
 const FILE_EXTENSION = '.mdp.json';
-
-// Minimal ambient types for the File System Access API (not yet in TypeScript's
-// bundled DOM lib). Only the subset this file actually calls.
-interface FileSystemWritableFileStream {
-  write(data: BlobPart): Promise<void>;
-  close(): Promise<void>;
-}
-
-interface FileSystemFileHandle {
-  createWritable(): Promise<FileSystemWritableFileStream>;
-}
-
-interface SaveFilePickerOptions {
-  suggestedName?: string;
-  types?: { description?: string; accept: Record<string, string[]> }[];
-}
-
-declare global {
-  interface Window {
-    showSaveFilePicker?: (options?: SaveFilePickerOptions) => Promise<FileSystemFileHandle>;
-  }
-}
 
 export async function exportMDPToFile(
   states: MDPState[],
@@ -63,36 +42,11 @@ export async function exportMDPToFile(
   const json = JSON.stringify(fileData, null, 2);
   const fileName = `${sanitizeFileName(title)}${FILE_EXTENSION}`;
 
-  if (typeof window.showSaveFilePicker === 'function') {
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: fileName,
-        types: [{ description: 'MDP JSON file', accept: { 'application/json': ['.json'] } }],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(json);
-      await writable.close();
-      return;
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-      throw error;
-    }
-  }
-
-  // Fallback for browsers without the File System Access API (e.g. Firefox, Safari):
-  // triggers a normal browser download instead of a folder/filename picker.
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  await saveTextToFile(json, fileName, {
+    description: 'MDP JSON file',
+    mimeType: 'application/json',
+    extensions: ['.json'],
+  });
 }
 
 export function importMDPFromFile(file: File): Promise<MDPFileFormat> {
@@ -111,12 +65,6 @@ export function importMDPFromFile(file: File): Promise<MDPFileFormat> {
 
     reader.readAsText(file);
   });
-}
-
-function sanitizeFileName(title: string): string {
-  const trimmed = title.trim();
-  const base = trimmed.length > 0 ? trimmed : 'untitled';
-  return base.toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
 }
 
 function validateMDPFileFormat(data: unknown): MDPFileFormat {

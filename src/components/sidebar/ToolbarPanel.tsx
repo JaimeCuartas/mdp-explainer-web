@@ -1,14 +1,15 @@
 import { useRef } from 'react';
 import type { ChangeEvent } from 'react';
-import { Download, Upload, RotateCcw } from 'lucide-react';
+import { Download, Upload, RotateCcw, FileCode } from 'lucide-react';
 
 interface ToolbarPanelProps {
   onSave: () => void;
   onOpen: (file: File) => void;
   onReset: () => void;
+  onExportMiniZinc: () => void;
 }
 
-export function ToolbarPanel({ onSave, onOpen, onReset }: ToolbarPanelProps) {
+export function ToolbarPanel({ onSave, onOpen, onReset, onExportMiniZinc }: ToolbarPanelProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleOpenClick = () => {
@@ -39,6 +40,10 @@ export function ToolbarPanel({ onSave, onOpen, onReset }: ToolbarPanelProps) {
         className="hidden-file-input"
         onChange={handleFileChange}
       />
+
+      <button type="button" className="action-button secondary" onClick={onExportMiniZinc}>
+        <FileCode size={16} /> Export to MiniZinc (.dzn)
+      </button>
 
       <button type="button" className="action-button danger" onClick={onReset}>
         <RotateCcw size={16} /> Reset Canvas

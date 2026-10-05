@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Herman's Self-Stabilization Protocol",
+    "updatedAt": "2026-09-29T10:00:00.000Z"
+  },
+  "logical": {
+    "states": [
+      { "id": "s_unstable", "label": "\\text{Multiple\\,Tokens}", "isInitial": true },
+      { "id": "s_recovering", "label": "\\text{Resolving}" },
+      { "id": "s_stable", "label": "\\text{Stable\\,(1\\,Token)}" },
+      { "id": "s_deadlock", "label": "\\text{Deadlock\\,(Fail)}" }
+    ],
+    "actions": [
+      { "id": "a_pass_token", "label": "step\\,async", "sourceStateId": "s_unstable" },
+      { "id": "a_retry", "label": "step\\,sync", "sourceStateId": "s_recovering" }
+    ],
+    "transitions": [
+      { "id": "t1", "actionId": "a_pass_token", "targetStateId": "s_stable", "probability": 0.6 },
+      { "id": "t2", "actionId": "a_pass_token", "targetStateId": "s_recovering", "probability": 0.3 },
+      { "id": "t3", "actionId": "a_pass_token", "targetStateId": "s_deadlock", "probability": 0.1 },
+      { "id": "t4", "actionId": "a_retry", "targetStateId": "s_stable", "probability": 0.9 },
+      { "id": "t5", "actionId": "a_retry", "targetStateId": "s_deadlock", "probability": 0.1 }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s_unstable": { "id": "s_unstable", "position": { "x": 100, "y": 150 } },
+      "s_recovering": { "id": "s_recovering", "position": { "x": 300, "y": 300 } },
+      "s_stable": { "id": "s_stable", "position": { "x": 500, "y": 150 } },
+      "s_deadlock": { "id": "s_deadlock", "position": { "x": 300, "y": 450 } },
+      "a_pass_token": { "id": "a_pass_token", "position": { "x": 250, "y": 150 } },
+      "a_retry": { "id": "a_retry", "position": { "x": 420, "y": 300 } }
+    }
+  }
+}

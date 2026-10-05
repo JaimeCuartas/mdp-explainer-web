@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Hardware Maintenance MDP",
+    "updatedAt": "2026-09-29T10:00:00.000Z"
+  },
+  "logical": {
+    "states": [
+      { "id": "s_good", "label": "\\text{Good\\,Condition}", "isInitial": true },
+      { "id": "s_degraded", "label": "\\text{Degraded}" },
+      { "id": "s_failure", "label": "\\text{Hardware\\,Failure\\,(Fail)}" }
+    ],
+    "actions": [
+      { "id": "a_operate", "label": "operate", "sourceStateId": "s_good" },
+      { "id": "a_operate_degraded", "label": "continue\\,operating", "sourceStateId": "s_degraded" },
+      { "id": "a_maintain", "label": "repair", "sourceStateId": "s_degraded" }
+    ],
+    "transitions": [
+      { "id": "t1", "actionId": "a_operate", "targetStateId": "s_good", "probability": 0.7 },
+      { "id": "t2", "actionId": "a_operate", "targetStateId": "s_degraded", "probability": 0.3 },
+      { "id": "t3", "actionId": "a_operate_degraded", "targetStateId": "s_degraded", "probability": 0.3 },
+      { "id": "t4", "actionId": "a_operate_degraded", "targetStateId": "s_failure", "probability": 0.7 },
+      { "id": "t5", "actionId": "a_maintain", "targetStateId": "s_good", "probability": 0.9 },
+      { "id": "t6", "actionId": "a_maintain", "targetStateId": "s_failure", "probability": 0.1 }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s_good": { "id": "s_good", "position": { "x": 150, "y": 150 } },
+      "s_degraded": { "id": "s_degraded", "position": { "x": 450, "y": 150 } },
+      "s_failure": { "id": "s_failure", "position": { "x": 300, "y": 350 } },
+      "a_operate": { "id": "a_operate", "position": { "x": 300, "y": 80 } },
+      "a_operate_degraded": { "id": "a_operate_degraded", "position": { "x": 400, "y": 270 } },
+      "a_maintain": { "id": "a_maintain", "position": { "x": 220, "y": 270 } }
+    }
+  }
+}

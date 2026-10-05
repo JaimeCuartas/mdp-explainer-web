@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Joint Causality Reactor MDP",
+    "updatedAt": "2026-09-30T00:00:00.000Z"
+  },
+  "logical": {
+    "states": [
+      { "id": "s0", "label": "\\text{Normal}", "isInitial": true },
+      { "id": "s_no_alarm", "label": "\\text{Alarm\\,OFF}" },
+      { "id": "s_high_press", "label": "\\text{High\\,Pressure}" },
+      { "id": "s_critical", "label": "\\text{Critical\\,State}" },
+      { "id": "s_crash", "label": "\\text{Crash\\,(Fail)}" },
+      { "id": "s_safe_trip", "label": "\\text{Safe\\,Trip}" }
+    ],
+    "actions": [
+      { "id": "a_s0_disable", "label": "disable\\_alarm", "sourceStateId": "s0" },
+      { "id": "a_s0_spike", "label": "pressure\\_spike", "sourceStateId": "s0" },
+      { "id": "a_no_alarm_spike", "label": "pressure\\_spike", "sourceStateId": "s_no_alarm" },
+      { "id": "a_high_press_disable", "label": "disable\\_alarm", "sourceStateId": "s_high_press" },
+      { "id": "a_high_press_auto_trip", "label": "auto\\_safety\\_trip", "sourceStateId": "s_high_press" },
+      { "id": "a_critical_fail", "label": "explode", "sourceStateId": "s_critical" }
+    ],
+    "transitions": [
+      { "id": "t1", "actionId": "a_s0_disable", "targetStateId": "s_no_alarm", "probability": 1.0 },
+      { "id": "t2", "actionId": "a_s0_spike", "targetStateId": "s_high_press", "probability": 1.0 },
+      { "id": "t3", "actionId": "a_no_alarm_spike", "targetStateId": "s_critical", "probability": 1.0 },
+      { "id": "t4", "actionId": "a_high_press_disable", "targetStateId": "s_critical", "probability": 1.0 },
+      { "id": "t5", "actionId": "a_high_press_auto_trip", "targetStateId": "s_safe_trip", "probability": 1.0 },
+      { "id": "t6", "actionId": "a_critical_fail", "targetStateId": "s_crash", "probability": 1.0 }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s0": { "id": "s0", "position": { "x": 300, "y": 50 } },
+      "s_no_alarm": { "id": "s_no_alarm", "position": { "x": 150, "y": 200 } },
+      "s_high_press": { "id": "s_high_press", "position": { "x": 450, "y": 200 } },
+      "s_critical": { "id": "s_critical", "position": { "x": 300, "y": 350 } },
+      "s_crash": { "id": "s_crash", "position": { "x": 300, "y": 500 } },
+      "s_safe_trip": { "id": "s_safe_trip", "position": { "x": 600, "y": 350 } },
+      "a_s0_disable": { "id": "a_s0_disable", "position": { "x": 200, "y": 120 } },
+      "a_s0_spike": { "id": "a_s0_spike", "position": { "x": 400, "y": 120 } },
+      "a_no_alarm_spike": { "id": "a_no_alarm_spike", "position": { "x": 200, "y": 280 } },
+      "a_high_press_disable": { "id": "a_high_press_disable", "position": { "x": 400, "y": 280 } },
+      "a_high_press_auto_trip": { "id": "a_high_press_auto_trip", "position": { "x": 550, "y": 280 } },
+      "a_critical_fail": { "id": "a_critical_fail", "position": { "x": 300, "y": 420 } }
+    }
+  }
+}

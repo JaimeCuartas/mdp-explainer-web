@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Gambler's Portfolio Strategy",
+    "updatedAt": "2026-09-29T10:00:00.000Z"
+  },
+  "logical": {
+    "states": [
+      { "id": "s_cap10", "label": "\\text{Capital\\,10}", "isInitial": true },
+      { "id": "s_cap20", "label": "\\text{Target\\,20\\,(Goal)}" },
+      { "id": "s_ruin", "label": "\\text{Ruin\\,(Fail)}" }
+    ],
+    "actions": [
+      { "id": "a_high_risk", "label": "all\\_in", "sourceStateId": "s_cap10" },
+      { "id": "a_low_risk", "label": "safe\\_investment", "sourceStateId": "s_cap10" }
+    ],
+    "transitions": [
+      { "id": "t1", "actionId": "a_high_risk", "targetStateId": "s_cap20", "probability": 0.4 },
+      { "id": "t2", "actionId": "a_high_risk", "targetStateId": "s_ruin", "probability": 0.6 },
+      { "id": "t3", "actionId": "a_low_risk", "targetStateId": "s_cap10", "probability": 0.8 },
+      { "id": "t4", "actionId": "a_low_risk", "targetStateId": "s_cap20", "probability": 0.2 }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s_cap10": { "id": "s_cap10", "position": { "x": 150, "y": 200 } },
+      "s_cap20": { "id": "s_cap20", "position": { "x": 450, "y": 100 } },
+      "s_ruin": { "id": "s_ruin", "position": { "x": 450, "y": 300 } },
+      "a_high_risk": { "id": "a_high_risk", "position": { "x": 300, "y": 260 } },
+      "a_low_risk": { "id": "a_low_risk", "position": { "x": 300, "y": 140 } }
+    }
+  }
+}

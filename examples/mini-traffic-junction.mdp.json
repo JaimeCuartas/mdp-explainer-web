@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Mini Traffic Junction",
+    "updatedAt": "2026-09-29T10:00:00.000Z"
+  },
+  "logical": {
+    "states": [
+      { "id": "s_approach", "label": "\\text{Approaching}", "isInitial": true },
+      { "id": "s_intersection", "label": "\\text{In\\,Junction}" },
+      { "id": "s_collision", "label": "\\text{Collision\\,(Fail)}" },
+      { "id": "s_cleared", "label": "\\text{Cleared}" }
+    ],
+    "actions": [
+      { "id": "a_app_fast", "label": "accelerate", "sourceStateId": "s_approach" },
+      { "id": "a_app_yield", "label": "yield", "sourceStateId": "s_approach" },
+      { "id": "a_int_cross", "label": "cross", "sourceStateId": "s_intersection" }
+    ],
+    "transitions": [
+      { "id": "t1", "actionId": "a_app_fast", "targetStateId": "s_intersection", "probability": 0.7 },
+      { "id": "t2", "actionId": "a_app_fast", "targetStateId": "s_collision", "probability": 0.3 },
+      { "id": "t3", "actionId": "a_app_yield", "targetStateId": "s_intersection", "probability": 1.0 },
+      { "id": "t4", "actionId": "a_int_cross", "targetStateId": "s_cleared", "probability": 0.8 },
+      { "id": "t5", "actionId": "a_int_cross", "targetStateId": "s_collision", "probability": 0.2 }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s_approach": { "id": "s_approach", "position": { "x": 100, "y": 150 } },
+      "s_intersection": { "id": "s_intersection", "position": { "x": 350, "y": 150 } },
+      "s_collision": { "id": "s_collision", "position": { "x": 220, "y": 320 } },
+      "s_cleared": { "id": "s_cleared", "position": { "x": 550, "y": 150 } },
+      "a_app_fast": { "id": "a_app_fast", "position": { "x": 220, "y": 220 } },
+      "a_app_yield": { "id": "a_app_yield", "position": { "x": 220, "y": 80 } },
+      "a_int_cross": { "id": "a_int_cross", "position": { "x": 450, "y": 220 } }
+    }
+  }
+}
