@@ -113,6 +113,10 @@ export function InspectorPanel({
       onUpdateAction(selectedAction.id, { label: event.target.value });
     };
 
+    const handlePolicyChange = (event: ChangeEvent<HTMLInputElement>) => {
+      onUpdateAction(selectedAction.id, { policy: Number(event.target.value) });
+    };
+
     return (
       <div className="inspector-panel">
         <h3>Action Inspector</h3>
@@ -120,6 +124,18 @@ export function InspectorPanel({
         <label className="inspector-field">
           <span>Label</span>
           <input type="text" value={selectedAction.label} onChange={handleActionLabelChange} />
+        </label>
+
+        <label className="inspector-field">
+          <span>Policy</span>
+          <input
+            type="number"
+            min={0}
+            max={1}
+            step={0.01}
+            value={selectedAction.policy ?? 0}
+            onChange={handlePolicyChange}
+          />
         </label>
 
         <p className="inspector-meta">

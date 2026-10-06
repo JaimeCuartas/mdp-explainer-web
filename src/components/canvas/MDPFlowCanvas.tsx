@@ -151,7 +151,7 @@ function buildEdges(
         stroke: isSelected ? SELECTION_COLOR : '#94a3b8',
         strokeWidth: isSelected ? 2 : 1,
       },
-      data: { label: action.label },
+      data: { label: action.label, policy: action.policy },
     };
   });
 

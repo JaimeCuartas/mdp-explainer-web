@@ -10,14 +10,23 @@ interface PoliciesPanelProps {
   actions: MDPAction[];
   transitions: MDPTransition[];
   selectedStateId: string | null;
+  onUpdateAction: (id: string, updates: Partial<MDPAction>) => void;
 }
 
-export function PoliciesPanel({ states, actions, transitions, selectedStateId }: PoliciesPanelProps) {
+export function PoliciesPanel({ states, actions, transitions, selectedStateId, onUpdateAction }: PoliciesPanelProps) {
   const [gamma, setGamma] = useState(0.9);
   const [result, setResult] = useState<ValueIterationResult | null>(null);
 
   const handleCompute = () => {
-    setResult(computeOptimalPolicy(states, actions, transitions, { discountFactor: gamma }));
+    const computed = computeOptimalPolicy(states, actions, transitions, { discountFactor: gamma });
+    setResult(computed);
+
+    // One-hot encode the computed deterministic policy into each action's own
+    // editable pi(a|s): the chosen action at a state gets 1, its siblings get 0.
+    for (const action of actions) {
+      const chosenActionId = computed.policy[action.sourceStateId];
+      onUpdateAction(action.id, { policy: action.id === chosenActionId ? 1 : 0 });
+    }
   };
 
   const selectedState = states.find((state) => state.id === selectedStateId) ?? null;

@@ -10,6 +10,8 @@ export interface MDPAction {
     id: string;
     label: string;
     sourceStateId: string;
+    /** pi(action | sourceState) — the stochastic policy's probability of choosing this action. */
+    policy?: number;
 }
 
 export interface MDPTransition {

@@ -200,6 +200,7 @@ function App() {
           actions={actions}
           transitions={transitions}
           selectedStateId={selectedStateId}
+          onUpdateAction={updateAction}
         />
 
         <ProbabilitiesPanel

@@ -4,6 +4,7 @@ import { InlineMath } from 'react-katex';
 
 export interface ActionEdgeData extends Record<string, unknown> {
   label: string;
+  policy?: number;
 }
 
 export type ActionFlowEdge = Edge<ActionEdgeData, 'action'>;
@@ -19,6 +20,9 @@ export function ActionEdge({
 }: EdgeProps<ActionFlowEdge>) {
   const [edgePath, labelX, labelY] = getStraightPath({ sourceX, sourceY, targetX, targetY });
 
+  const label = data?.label ?? '';
+  const labelMath = data?.policy !== undefined ? `${label} (${data.policy})` : label;
+
   return (
     <>
       <BaseEdge id={id} path={edgePath} style={style} />
@@ -32,7 +36,7 @@ export function ActionEdge({
             fontSize: '0.7rem',
           }}
         >
-          <InlineMath math={data?.label ?? ''} />
+          <InlineMath math={labelMath} />
         </div>
       </EdgeLabelRenderer>
     </>
