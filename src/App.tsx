@@ -5,6 +5,7 @@ import { ToolbarPanel } from './components/sidebar/ToolbarPanel';
 import { InspectorPanel } from './components/sidebar/InspectorPanel';
 import { PoliciesPanel } from './components/sidebar/PoliciesPanel';
 import { ProbabilitiesPanel } from './components/sidebar/ProbabilitiesPanel';
+import { ExplainabilityPanel } from './components/sidebar/ExplainabilityPanel';
 import { useMDP, DEFAULT_NODE_SIZE } from './hooks/useMDP';
 import { exportMDPToFile, importMDPFromFile } from './core/serializers/jsonSerializer';
 import { exportMDPToMiniZincDzn } from './core/serializers/minizincSerializer';
@@ -207,6 +208,8 @@ function App() {
           transitions={transitions}
           selectedStateId={selectedStateId}
         />
+
+        <ExplainabilityPanel />
 
         <InspectorPanel
           selectedState={selectedState}
