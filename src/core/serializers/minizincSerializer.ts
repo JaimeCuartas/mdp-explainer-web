@@ -125,9 +125,17 @@ export function buildMiniZincDzn(
   const probabilityBody = buildArrayBody((entry) => entry?.probability ?? 0);
   const rewardBody = buildArrayBody((entry) => entry?.reward ?? 0);
 
+  const initialStateIndex = states.findIndex((state) => state.isInitial);
+  const effectStateNames = states
+    .map((state, index) => (state.isTargetEffect ? stateNames[index] : null))
+    .filter((name): name is string => name !== null);
+
   return [
     `states  = {${stateNames.join(',')}};`,
     `actions = {${actionNames.join(',')}};`,
+    '',
+    ...(initialStateIndex >= 0 ? [`init_state = ${stateNames[initialStateIndex]};`] : []),
+    `effect_states = {${effectStateNames.join(',')}};`,
     '',
     'P = array3d(states,actions,states,[',
     probabilityBody,

@@ -1,0 +1,80 @@
+states  = {s_kee72v9,s_4f52ubz,s_89ds41w,s_h5n9wao,s_0qylksj,s_9pesji4,s_6mb6x4l};
+actions = {a,b};
+
+init_state = s_kee72v9;
+effect_states = {s_4f52ubz};
+
+P = array3d(states,actions,states,[
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.6, 0.0, 0.0, 0.4, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+]);
+
+policy = [|
+    % a,   b
+       0.0, 1.0 | % s_kee72v9 (Action a -> s_89ds41w)
+       1.0, 0.0 | % s_4f52ubz (Target state)
+       1.0, 0.0 | % s_89ds41w (Action a -> s_4f52ubz)
+       1.0, 0.0 | % s_h5n9wao (Default)
+       1.0, 0.0 | % s_0qylksj (Default)
+       1.0, 0.0 | % s_9pesji4 (Default)
+       1.0, 0.0
+|];
+
+R = array3d(states,actions,states,[
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_kee72v9  s_4f52ubz  s_89ds41w  s_h5n9wao  s_0qylksj  s_9pesji4  s_6mb6x4l  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+]);
+
+g = 1.0;
