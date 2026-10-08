@@ -1,15 +1,16 @@
 enum states;
 enum actions;
 
+% Reward R(s, a, s')
 array[states,actions,states] of float: R;
 % Probabilities P(s, a, s')
 array[states, actions, states] of float: P;
 
 var float: g;
 
-set of states: effect_states;               % effect
-states: init_state;                          % Init
-array[states, actions] of float: policy;    % policy pi(a|s)
+set of states: effect_states;
+states: init_state;
+array[states, actions] of float: policy;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -33,10 +34,7 @@ constraint
 solve satisfy;
 
 output [
-    "--- RESULTADO ---\n",
-    "Estado Inicial: ", show(init_state), "\n",
-    "Probabilidad de éxito desde el estado inicial: ", show(reach[init_state]), "\n\n",
-    "Probabilidad por estado:\n"
+    "Init_state: \(init_state), Prob: \(reach[init_state])\n"
 ] ++ [
     "  " ++ show(s) ++ ": " ++ show(reach[s]) ++ "\n"
     | s in states

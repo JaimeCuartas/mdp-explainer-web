@@ -64,7 +64,7 @@ export function buildMiniZincDzn(
 ): string {
   const usedIdentifiers = new Set<string>();
   const stateNames = buildUniqueIdentifiers(
-    states.map((state) => state.id),
+    states.map((state) => state.label+state.id),
     usedIdentifiers
   );
 
@@ -125,6 +125,48 @@ export function buildMiniZincDzn(
   const probabilityBody = buildArrayBody((entry) => entry?.probability ?? 0);
   const rewardBody = buildArrayBody((entry) => entry?.reward ?? 0);
 
+  // policy[s, a] = pi(a | s). Each state owns its actions, so a (state,
+  // action-label) pair the state doesn't have gets 0, and an action with no
+  // policy set also counts as 0 (matching what the inspector displays).
+  const policyByStateAndLabel = new Map<string, Map<string, number>>();
+  for (const action of actions) {
+    let byLabel = policyByStateAndLabel.get(action.sourceStateId);
+    if (!byLabel) {
+      byLabel = new Map();
+      policyByStateAndLabel.set(action.sourceStateId, byLabel);
+    }
+    byLabel.set(action.label, (byLabel.get(action.label) ?? 0) + (action.policy ?? 0));
+  }
+
+  function buildPolicyLines(): string[] {
+    if (states.length === 0 || actionNames.length === 0) {
+      return ['policy = array2d(states,actions,[]);'];
+    }
+    const rows = states.map((state) =>
+      distinctActionLabels.map((label) =>
+        formatDznFloat(policyByStateAndLabel.get(state.id)?.get(label) ?? 0)
+      )
+    );
+    const widths = actionNames.map((name, ai) =>
+      Math.max(name.length, ...rows.map((row) => row[ai].length))
+    );
+    const pad = (cells: string[]) => cells.map((cell, ai) => cell.padEnd(widths[ai])).join(', ');
+
+    const lines = ['policy = [|', `    % ${pad(actionNames)}`];
+    rows.forEach((row, si) => {
+      const state = states[si];
+      const notes: string[] = [];
+      if (state.label && state.label !== stateNames[si]) notes.push(state.label);
+      if (state.isTargetEffect) notes.push('effect state');
+      if (!policyByStateAndLabel.has(state.id)) notes.push('no actions');
+      const comment = `% ${stateNames[si]}${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`;
+      const separator = si < rows.length - 1 ? ' |' : '  ';
+      lines.push(`      ${pad(row)}${separator} ${comment}`);
+    });
+    lines.push('|];');
+    return lines;
+  }
+
   const initialStateIndex = states.findIndex((state) => state.isInitial);
   const effectStateNames = states
     .map((state, index) => (state.isTargetEffect ? stateNames[index] : null))
@@ -140,6 +182,8 @@ export function buildMiniZincDzn(
     'P = array3d(states,actions,states,[',
     probabilityBody,
     ']);',
+    '',
+    ...buildPolicyLines(),
     '',
     'R = array3d(states,actions,states,[',
     rewardBody,
