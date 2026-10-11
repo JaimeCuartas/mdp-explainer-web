@@ -69,7 +69,7 @@ export function computeReachability(
           probabilities[state.id] = 1;
       } else {
           probabilities[state.id] = 0;
-          nonEffectStateIds.push(state);
+          nonEffectStates.push(state);
       }
   }
 
