@@ -20,7 +20,7 @@ export interface ValueIterationResult {
   converged: boolean;
 }
 
-export type ReachabilityMode = 'max' | 'min';
+export type ReachabilityMode = 'max' | 'min' | 'policy';
 
 export interface ReachabilityOptions {
   maxIterations?: number;
