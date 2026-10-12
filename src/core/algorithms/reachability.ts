@@ -111,6 +111,102 @@ export function computeReachabilityProbabilities(
   return { probabilities, iterations, converged };
 }
 
+// Q-values within this of a state's optimal value count as optimal: exact ties
+// (common with loops) come out of value iteration a few ulps apart.
+const OPTIMALITY_TOLERANCE = 1e-6;
+
+/**
+ * stateId -> the actions achieving that state's max/min probability, for every
+ * non-effect state (an empty list for dead ends). An optimal action's expected
+ * probability equals the state's own, whichever of max/min it was computed by.
+ */
+function optimalActions(
+  graph: MDPGraph,
+  probabilities: Record<string, number>,
+): Map<string, MDPAction[]> {
+  const optimalActionsByState = new Map<string, MDPAction[]>();
+  for (const state of graph.states) {
+    if (state.isTargetEffect) {
+      continue;
+    }
+    optimalActionsByState.set(
+      state.id,
+      (graph.actionsByState.get(state.id) ?? []).filter(
+        (action) =>
+          Math.abs(
+            expectedActionProbability(action, graph.transitionsByAction, probabilities) -
+              probabilities[state.id],
+          ) <= OPTIMALITY_TOLERANCE,
+      ),
+    );
+  }
+  return optimalActionsByState;
+}
+
+/**
+ * Min reachability: any optimal action per state gives an optimal policy, since
+ * looping without ever reaching an effect state only lowers the probability.
+ */
+function extractMinPolicy(
+  optimalActionsByState: Map<string, MDPAction[]>,
+): Record<string, string | null> {
+  const policy: Record<string, string | null> = {};
+
+  for (const [stateId, stateOptimalActions] of optimalActionsByState) {
+    policy[stateId] = stateOptimalActions[0]?.id ?? null;
+  }
+
+  return policy;
+}
+
+/**
+ * Max reachability: any optimal action per state is not enough, since optimal
+ * actions can form a loop that never reaches an effect state (e.g. s -a-> s2
+ * -c-> s ties with s -b-> effect, yet looping reaches it with probability 0).
+ * So first pick optimal actions backwards from the effect states, only choosing
+ * one that moves with positive probability into an already-reached state; the
+ * states left over cannot reach an effect state at all, and for them any
+ * optimal action will do, as for min.
+ */
+function extractMaxPolicy(
+  graph: MDPGraph,
+  optimalActionsByState: Map<string, MDPAction[]>,
+): Record<string, string | null> {
+  const policy: Record<string, string | null> = {};
+  const reached = new Set(
+    graph.states.filter((state) => state.isTargetEffect).map((state) => state.id),
+  );
+
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const [stateId, stateOptimalActions] of optimalActionsByState) {
+      if (reached.has(stateId)) {
+        continue;
+      }
+      const progressingAction = stateOptimalActions.find((action) =>
+        (graph.transitionsByAction.get(action.id) ?? []).some(
+          (transition) =>
+            transition.probability > 0 && reached.has(transition.targetStateId),
+        ),
+      );
+      if (progressingAction) {
+        policy[stateId] = progressingAction.id;
+        reached.add(stateId);
+        changed = true;
+      }
+    }
+  }
+
+  for (const [stateId, stateOptimalActions] of optimalActionsByState) {
+    if (!reached.has(stateId)) {
+      policy[stateId] = stateOptimalActions[0]?.id ?? null;
+    }
+  }
+
+  return policy;
+}
+
 /**
  * The deterministic policy achieving the max ('max') or min ('min')
  * reachability probability, alongside those probabilities. Effect states get
@@ -125,33 +221,17 @@ export function computeReachabilityPolicy(
 ): ReachabilityResult {
   const graph = buildMDPGraph(states, actions, transitions);
   const result = computeReachabilityProbabilities(graph, mode, options);
+  const optimalActionsByState = optimalActions(graph, result.probabilities);
 
-  const policy: Record<string, string | null> = {};
+  const policy =
+    mode === "max"
+      ? extractMaxPolicy(graph, optimalActionsByState)
+      : extractMinPolicy(optimalActionsByState);
+  // Reaching an effect state already ends the query: nothing to choose there.
   for (const state of states) {
     if (state.isTargetEffect) {
       policy[state.id] = null;
-      continue;
     }
-
-    const stateActions = graph.actionsByState.get(state.id) ?? [];
-    let bestAction: MDPAction | null = null;
-    let chosenValue = mode === "max" ? -Infinity : Infinity;
-    for (const action of stateActions) {
-      const expectedProbability = expectedActionProbability(
-        action,
-        graph.transitionsByAction,
-        result.probabilities,
-      );
-      const isBetter =
-        mode === "max"
-          ? expectedProbability > chosenValue
-          : expectedProbability < chosenValue;
-      if (isBetter) {
-        chosenValue = expectedProbability;
-        bestAction = action;
-      }
-    }
-    policy[state.id] = bestAction ? bestAction.id : null;
   }
 
   return { ...result, policy };
