@@ -86,17 +86,20 @@ export function computeReachability(
         continue;
       }
 
+      const stateMode = options.policyStateIds?.has(state.id)
+        ? "policy"
+        : mode;
       let chosenValue =
-        mode === "max" ? -Infinity : mode === "min" ? Infinity : 0.0;
+        stateMode === "max" ? -Infinity : stateMode === "min" ? Infinity : 0.0;
       for (const action of stateActions) {
         const expectedProbability = expectedActionProbability(
           action,
           transitionsByAction,
           probabilities,
         );
-        if (mode === "max") {
+        if (stateMode === "max") {
           chosenValue = Math.max(chosenValue, expectedProbability);
-        } else if (mode === "min") {
+        } else if (stateMode === "min") {
           chosenValue = Math.min(chosenValue, expectedProbability);
         } else {
           chosenValue += expectedProbability * (action?.policy ?? 0);

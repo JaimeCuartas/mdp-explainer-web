@@ -25,6 +25,11 @@ export type ReachabilityMode = 'max' | 'min' | 'policy';
 export interface ReachabilityOptions {
   maxIterations?: number;
   tolerance?: number;
+  /**
+   * States that keep following the stochastic policy (`action.policy`)
+   * regardless of `mode`; every other non-effect state is resolved by `mode`.
+   */
+  policyStateIds?: ReadonlySet<string>;
 }
 
 export interface ReachabilityResult {
@@ -34,4 +39,27 @@ export interface ReachabilityResult {
   policy: Record<string, string | null>;
   iterations: number;
   converged: boolean;
+}
+
+export interface ExplanationOptions extends ReachabilityOptions {
+  /**
+   * Allowed relative deviation from the reference probability p0: a candidate
+   * is sufficient when its min/max reachability stays within
+   * [p0 * (1 - deviation), min(1, p0 * (1 + deviation))].
+   */
+  deviation?: number;
+}
+
+export interface ReachabilityBounds {
+  /** stateId -> min reachability when only the candidate states follow the policy. */
+  min: Record<string, number>;
+  /** stateId -> max reachability when only the candidate states follow the policy. */
+  max: Record<string, number>;
+}
+
+export interface ExplanationResult {
+  /** Subset-minimal abductive explanations, as lists of state ids. */
+  axps: string[][];
+  /** Subset-minimal contrastive explanations, as lists of state ids. */
+  cxps: string[][];
 }

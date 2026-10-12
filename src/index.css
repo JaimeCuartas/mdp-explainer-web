@@ -306,3 +306,130 @@ body, html, #root {
   padding: 12px;
 }
 
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.xp-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Same reason as .accordion-section: let .sidebar scroll instead of squashing this. */
+  flex-shrink: 0;
+}
+
+.xp-error {
+  font-size: 0.85rem;
+  color: #dc2626;
+}
+
+.xp-list {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.xp-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: #f3f4f6;
+  border-left: 3px solid #2563eb;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.xp-list-count {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.xp-list-items {
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.xp-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.xp-list-item:first-child {
+  border-top: none;
+}
+
+.xp-list-index {
+  min-width: 20px;
+  padding-top: 2px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-variant-numeric: tabular-nums;
+}
+
+.xp-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.xp-chip {
+  padding: 2px 8px;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.75rem;
+}
+
+.xp-chip .katex {
+  font-size: 1em;
+}
+
+.xp-chip--empty {
+  border-color: #e5e7eb;
+  background-color: #f9fafb;
+  color: #6b7280;
+}
+
+.xp-list-empty {
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.xp-list--cxp .xp-list-header {
+  border-left-color: #d97706;
+}
+
+.xp-list--cxp .xp-list-count {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.xp-list--cxp .xp-chip:not(.xp-chip--empty) {
+  border-color: #fde68a;
+  background-color: #fffbeb;
+  color: #b45309;
+}

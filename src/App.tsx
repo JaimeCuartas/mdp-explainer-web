@@ -5,7 +5,7 @@ import { InspectorPanel } from './components/inspector/InspectorPanel';
 import { ToolbarPanel } from './components/sidebar/ToolbarPanel';
 import { PoliciesPanel } from './components/sidebar/PoliciesPanel';
 import { ProbabilitiesPanel } from './components/sidebar/ProbabilitiesPanel';
-import { ExplainabilityPanel } from './components/sidebar/ExplainabilityPanel';
+import { TargetCXpPanel } from './components/sidebar/TargetCXpPanel';
 import { useMDP, DEFAULT_NODE_SIZE } from './hooks/useMDP';
 import { exportMDPToFile, importMDPFromFile } from './core/serializers/jsonSerializer';
 import { exportMDPToMiniZincDzn } from './core/serializers/minizincSerializer';
@@ -181,7 +181,7 @@ function App() {
             selectedStateId={selectedStateId}
           />
 
-          <ExplainabilityPanel />
+          <TargetCXpPanel states={states} actions={actions} transitions={transitions} />
         </aside>
 
         <main className="canvas-area">
