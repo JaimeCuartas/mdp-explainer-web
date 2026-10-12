@@ -87,6 +87,21 @@ body, html, #root {
   overflow: hidden;
 }
 
+/* Explanation highlight, in the same colours as the sidebar's AXp/CXp lists. A ring
+   (box-shadow) rather than a border/background, so it stacks with the
+   initial/candidate/effect styling set inline on the node. */
+.state-node-circle--axp {
+  box-shadow: 0 0 0 4px #2563eb, 0 0 12px 4px rgba(37, 99, 235, 0.45);
+}
+
+.state-node-circle--cxp {
+  box-shadow: 0 0 0 4px #d97706, 0 0 12px 4px rgba(217, 119, 6, 0.45);
+}
+
+.state-node-circle--dimmed {
+  opacity: 0.35;
+}
+
 .action-node {
   width: 100%;
   height: 100%;
@@ -369,15 +384,32 @@ body, html, #root {
 }
 
 .xp-list-item {
+  width: 100%;
   display: flex;
   align-items: flex-start;
   gap: 8px;
   padding: 6px 12px;
+  background: none;
+  border: none;
   border-top: 1px solid #f3f4f6;
+  border-left: 3px solid transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.xp-list-item:first-child {
+.xp-list-items li:first-child .xp-list-item {
   border-top: none;
+}
+
+.xp-list-item:hover {
+  background-color: #f9fafb;
+}
+
+.xp-list-item--selected,
+.xp-list-item--selected:hover {
+  background-color: #eff6ff;
+  border-left-color: #2563eb;
 }
 
 .xp-list-index {
@@ -426,6 +458,12 @@ body, html, #root {
 .xp-list--cxp .xp-list-count {
   background-color: #fef3c7;
   color: #b45309;
+}
+
+.xp-list--cxp .xp-list-item--selected,
+.xp-list--cxp .xp-list-item--selected:hover {
+  background-color: #fffbeb;
+  border-left-color: #d97706;
 }
 
 .xp-list--cxp .xp-chip:not(.xp-chip--empty) {

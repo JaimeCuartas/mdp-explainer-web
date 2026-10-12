@@ -9,6 +9,7 @@ import { TargetCXpPanel } from './components/sidebar/TargetCXpPanel';
 import { useMDP, DEFAULT_NODE_SIZE } from './hooks/useMDP';
 import { exportMDPToFile, importMDPFromFile } from './core/serializers/jsonSerializer';
 import { exportMDPToMiniZincDzn } from './core/serializers/minizincSerializer';
+import type { ExplanationHighlight } from './types/explanation';
 
 function App() {
   const {
@@ -41,6 +42,7 @@ function App() {
   const [selectedActionId, setSelectedActionId] = useState<string | null>(null);
   const [selectedTransitionId, setSelectedTransitionId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [explanationHighlight, setExplanationHighlight] = useState<ExplanationHighlight | null>(null);
 
   const selectedState = states.find((state) => state.id === selectedStateId) ?? null;
   const selectedStateSize = selectedState ? (nodeSizes[selectedState.id] ?? DEFAULT_NODE_SIZE) : null;
@@ -181,7 +183,13 @@ function App() {
             selectedStateId={selectedStateId}
           />
 
-          <TargetCXpPanel states={states} actions={actions} transitions={transitions} />
+          <TargetCXpPanel
+            states={states}
+            actions={actions}
+            transitions={transitions}
+            highlight={explanationHighlight}
+            onHighlightChange={setExplanationHighlight}
+          />
         </aside>
 
         <main className="canvas-area">
@@ -195,6 +203,7 @@ function App() {
             selectedStateId={selectedStateId}
             selectedActionId={selectedActionId}
             selectedTransitionId={selectedTransitionId}
+            explanationHighlight={explanationHighlight}
             onNodeDragStop={updateNodePosition}
             onActionDragStop={updateActionPosition}
             onNodeResize={updateNodeSize}

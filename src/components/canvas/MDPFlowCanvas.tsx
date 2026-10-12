@@ -27,6 +27,7 @@ import type {
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import { DEFAULT_NODE_SIZE } from '../../hooks/useMDP';
 import type { NodePosition, NodeSize } from '../../hooks/useMDP';
+import type { ExplanationHighlight } from '../../types/explanation';
 import { StateNode } from './StateNode';
 import type { StateFlowNode } from './StateNode';
 import { ActionNode } from './ActionNode';
@@ -56,6 +57,7 @@ interface MDPFlowCanvasProps {
   selectedStateId: string | null;
   selectedActionId: string | null;
   selectedTransitionId: string | null;
+  explanationHighlight: ExplanationHighlight | null;
   onNodeDragStop: (stateId: string, position: NodePosition) => void;
   onActionDragStop: (actionId: string, position: NodePosition) => void;
   onNodeResize: (stateId: string, size: NodeSize) => void;
@@ -79,11 +81,21 @@ function buildStateNodes(
   nodePositions: Record<string, NodePosition>,
   nodeSizes: Record<string, NodeSize>,
   selectedStateId: string | null,
+  explanationHighlight: ExplanationHighlight | null,
   onNodeResize: (stateId: string, size: NodeSize) => void,
   onNodeDragStop: (stateId: string, position: NodePosition) => void
 ): StateFlowNode[] {
+  const highlightedStateIds = new Set(explanationHighlight?.stateIds);
   return states.map((state, index) => {
     const size = nodeSizes[state.id] ?? DEFAULT_NODE_SIZE;
+    // Effect states are never part of an explanation, but stay undimmed as the target it explains.
+    const highlight = !explanationHighlight
+      ? undefined
+      : highlightedStateIds.has(state.id)
+        ? explanationHighlight.kind
+        : state.isTargetEffect
+          ? undefined
+          : 'dimmed';
     return {
       id: state.id,
       type: 'state',
@@ -96,6 +108,7 @@ function buildStateNodes(
         isInitial: state.isInitial,
         isCandidateCause: state.isCandidateCause,
         isTargetEffect: state.isTargetEffect,
+        explanationHighlight: highlight,
         onResizeEnd: (nextSize: NodeSize, nextPosition: NodePosition) => {
           onNodeResize(state.id, nextSize);
           onNodeDragStop(state.id, nextPosition);
@@ -223,6 +236,7 @@ function FlowCanvasInner({
   selectedStateId,
   selectedActionId,
   selectedTransitionId,
+  explanationHighlight,
   onNodeDragStop,
   onActionDragStop,
   onNodeResize,
@@ -247,7 +261,15 @@ function FlowCanvasInner({
 
   const builtNodes = useMemo<FlowNode[]>(
     () => [
-      ...buildStateNodes(states, nodePositions, nodeSizes, selectedStateId, onNodeResize, onNodeDragStop),
+      ...buildStateNodes(
+        states,
+        nodePositions,
+        nodeSizes,
+        selectedStateId,
+        explanationHighlight,
+        onNodeResize,
+        onNodeDragStop
+      ),
       ...buildActionNodes(actions, actionPositions, nodePositions, selectedActionId),
     ],
     [
@@ -255,6 +277,7 @@ function FlowCanvasInner({
       nodePositions,
       nodeSizes,
       selectedStateId,
+      explanationHighlight,
       onNodeResize,
       onNodeDragStop,
       actions,

@@ -5,6 +5,7 @@ import { enumerateXpsTargetCXps } from '../../core/algorithms/explain';
 import { buildMDPGraph } from '../../core/algorithms/mdpGraph';
 import { computeReachabilityProbability } from '../../core/algorithms/reachability';
 import type { ExplanationResult } from '../../core/algorithms/types';
+import type { ExplanationHighlight, ExplanationKind } from '../../types/explanation';
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import { ExplanationList } from './ExplanationList';
 
@@ -12,9 +13,11 @@ interface TargetCXpPanelProps {
   states: MDPState[];
   actions: MDPAction[];
   transitions: MDPTransition[];
+  highlight: ExplanationHighlight | null;
+  onHighlightChange: (highlight: ExplanationHighlight | null) => void;
 }
 
-export function TargetCXpPanel({ states, actions, transitions }: TargetCXpPanelProps) {
+export function TargetCXpPanel({ states, actions, transitions, highlight, onHighlightChange }: TargetCXpPanelProps) {
   const [result, setResult] = useState<ExplanationResult | null>(null);
   const [p0, setP0] = useState<number | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -32,9 +35,19 @@ export function TargetCXpPanel({ states, actions, transitions }: TargetCXpPanelP
       (a, b) => (stateIndexById.get(a) ?? Number.MAX_SAFE_INTEGER) - (stateIndexById.get(b) ?? Number.MAX_SAFE_INTEGER),
     );
 
+  const axps = result?.axps.map(sortSet) ?? [];
+  const cxps = result?.cxps.map(sortSet) ?? [];
+
+  // Clicking the highlighted explanation again clears the highlight.
+  const handleSelect = (kind: ExplanationKind, index: number, stateIds: string[]) => {
+    const isAlreadySelected = highlight?.kind === kind && highlight.index === index;
+    onHighlightChange(isAlreadySelected ? null : { kind, index, stateIds });
+  };
+
   const handleRun = async () => {
     setIsRunning(true);
     setError(null);
+    onHighlightChange(null);
     try {
       const initialState = states.find((state) => state.isInitial) ?? states[0];
       const reference = computeReachabilityProbability(states, actions, transitions, 'policy').probabilities[
@@ -68,8 +81,22 @@ export function TargetCXpPanel({ states, actions, transitions }: TargetCXpPanelP
           <p className="inspector-meta">
             <InlineMath math={`p_0 = ${p0.toFixed(3)}`} />
           </p>
-          <ExplanationList title="AXps" variant="axp" sets={result.axps.map(sortSet)} labelOf={labelOf} />
-          <ExplanationList title="CXps" variant="cxp" sets={result.cxps.map(sortSet)} labelOf={labelOf} />
+          <ExplanationList
+            title="AXps"
+            variant="axp"
+            sets={axps}
+            labelOf={labelOf}
+            selectedIndex={highlight?.kind === 'axp' ? highlight.index : null}
+            onSelect={(index) => handleSelect('axp', index, axps[index])}
+          />
+          <ExplanationList
+            title="CXps"
+            variant="cxp"
+            sets={cxps}
+            labelOf={labelOf}
+            selectedIndex={highlight?.kind === 'cxp' ? highlight.index : null}
+            onSelect={(index) => handleSelect('cxp', index, cxps[index])}
+          />
         </>
       )}
     </section>
