@@ -8,6 +8,10 @@ import type { ExplanationResult } from '../../core/algorithms/types';
 import type { ExplanationHighlight, ExplanationKind } from '../../types/explanation';
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import { ExplanationList } from './ExplanationList';
+import { PercentageSlider } from './PercentageSlider';
+
+// Allowed relative deviation from p0, as a percentage (options.deviation = 0.20).
+const DEFAULT_DEVIATION_PERCENT = 20;
 
 interface TargetCXpPanelProps {
   states: MDPState[];
@@ -22,6 +26,7 @@ export function TargetCXpPanel({ states, actions, transitions, highlight, onHigh
   const [p0, setP0] = useState<number | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deviationPercent, setDeviationPercent] = useState(DEFAULT_DEVIATION_PERCENT);
 
   const hasEffectStates = states.some((state) => state.isTargetEffect);
   const labelById = new Map(states.map((state) => [state.id, state.label]));
@@ -51,7 +56,9 @@ export function TargetCXpPanel({ states, actions, transitions, highlight, onHigh
     try {
       const initialState = states.find((state) => state.isInitial) ?? states[0];
       const reference = evaluatePolicyReachability(states, actions, transitions).probabilities[initialState.id];
-      const explanations = await enumerateXpsTargetCXps(buildMDPGraph(states, actions, transitions), reference);
+      const explanations = await enumerateXpsTargetCXps(buildMDPGraph(states, actions, transitions), reference, {
+        deviation: deviationPercent / 100,
+      });
       setP0(reference);
       setResult(explanations);
     } catch (err) {
@@ -71,6 +78,13 @@ export function TargetCXpPanel({ states, actions, transitions, highlight, onHigh
         {isRunning && <LoaderCircle size={16} className="spin" />}
         {isRunning ? 'Computing…' : 'Target CXp'}
       </button>
+
+      <PercentageSlider
+        label="Deviation from p₀"
+        value={deviationPercent}
+        disabled={isRunning}
+        onChange={setDeviationPercent}
+      />
 
       {error && <p className="xp-error">{error}</p>}
 

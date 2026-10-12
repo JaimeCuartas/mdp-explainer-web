@@ -1,0 +1,625 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "title": "Fan-out MDP",
+    "updatedAt": "2026-10-12T00:00:00.000Z"
+  },
+  "logical": {
+    "states": [
+      {
+        "id": "s0",
+        "label": "s_0",
+        "isInitial": true
+      },
+      {
+        "id": "b1",
+        "label": "b_{1}"
+      },
+      {
+        "id": "b2",
+        "label": "b_{2}"
+      },
+      {
+        "id": "b3",
+        "label": "b_{3}"
+      },
+      {
+        "id": "b4",
+        "label": "b_{4}"
+      },
+      {
+        "id": "b5",
+        "label": "b_{5}"
+      },
+      {
+        "id": "b6",
+        "label": "b_{6}"
+      },
+      {
+        "id": "b7",
+        "label": "b_{7}"
+      },
+      {
+        "id": "b8",
+        "label": "b_{8}"
+      },
+      {
+        "id": "b9",
+        "label": "b_{9}"
+      },
+      {
+        "id": "b10",
+        "label": "b_{10}"
+      },
+      {
+        "id": "goal",
+        "label": "\\text{goal}",
+        "isTargetEffect": true
+      },
+      {
+        "id": "sink",
+        "label": "\\text{sink}"
+      }
+    ],
+    "actions": [
+      {
+        "id": "a_s0_go",
+        "label": "\\text{go}",
+        "sourceStateId": "s0",
+        "policy": 1
+      },
+      {
+        "id": "a_b1_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b1",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b1_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b1",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b2_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b2",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b2_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b2",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b3_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b3",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b3_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b3",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b4_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b4",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b4_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b4",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b5_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b5",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b5_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b5",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b6_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b6",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b6_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b6",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b7_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b7",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b7_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b7",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b8_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b8",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b8_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b8",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b9_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b9",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b9_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b9",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b10_goal",
+        "label": "\\text{goal}",
+        "sourceStateId": "b10",
+        "policy": 0.5
+      },
+      {
+        "id": "a_b10_sink",
+        "label": "\\text{sink}",
+        "sourceStateId": "b10",
+        "policy": 0.5
+      }
+    ],
+    "transitions": [
+      {
+        "id": "t_go_b1",
+        "actionId": "a_s0_go",
+        "targetStateId": "b1",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b1_goal",
+        "actionId": "a_b1_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b1_sink",
+        "actionId": "a_b1_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b2",
+        "actionId": "a_s0_go",
+        "targetStateId": "b2",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b2_goal",
+        "actionId": "a_b2_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b2_sink",
+        "actionId": "a_b2_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b3",
+        "actionId": "a_s0_go",
+        "targetStateId": "b3",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b3_goal",
+        "actionId": "a_b3_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b3_sink",
+        "actionId": "a_b3_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b4",
+        "actionId": "a_s0_go",
+        "targetStateId": "b4",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b4_goal",
+        "actionId": "a_b4_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b4_sink",
+        "actionId": "a_b4_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b5",
+        "actionId": "a_s0_go",
+        "targetStateId": "b5",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b5_goal",
+        "actionId": "a_b5_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b5_sink",
+        "actionId": "a_b5_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b6",
+        "actionId": "a_s0_go",
+        "targetStateId": "b6",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b6_goal",
+        "actionId": "a_b6_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b6_sink",
+        "actionId": "a_b6_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b7",
+        "actionId": "a_s0_go",
+        "targetStateId": "b7",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b7_goal",
+        "actionId": "a_b7_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b7_sink",
+        "actionId": "a_b7_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b8",
+        "actionId": "a_s0_go",
+        "targetStateId": "b8",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b8_goal",
+        "actionId": "a_b8_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b8_sink",
+        "actionId": "a_b8_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b9",
+        "actionId": "a_s0_go",
+        "targetStateId": "b9",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b9_goal",
+        "actionId": "a_b9_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b9_sink",
+        "actionId": "a_b9_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      },
+      {
+        "id": "t_go_b10",
+        "actionId": "a_s0_go",
+        "targetStateId": "b10",
+        "probability": 0.1
+      },
+      {
+        "id": "t_b10_goal",
+        "actionId": "a_b10_goal",
+        "targetStateId": "goal",
+        "probability": 1
+      },
+      {
+        "id": "t_b10_sink",
+        "actionId": "a_b10_sink",
+        "targetStateId": "sink",
+        "probability": 1
+      }
+    ]
+  },
+  "graphical": {
+    "nodes": {
+      "s0": {
+        "id": "s0",
+        "position": {
+          "x": 650.0,
+          "y": 0
+        }
+      },
+      "a_s0_go": {
+        "id": "a_s0_go",
+        "position": {
+          "x": 667.0,
+          "y": 110
+        }
+      },
+      "b1": {
+        "id": "b1",
+        "position": {
+          "x": -25.0,
+          "y": 220
+        }
+      },
+      "a_b1_goal": {
+        "id": "a_b1_goal",
+        "position": {
+          "x": -38,
+          "y": 320
+        }
+      },
+      "a_b1_sink": {
+        "id": "a_b1_sink",
+        "position": {
+          "x": 22,
+          "y": 400
+        }
+      },
+      "b2": {
+        "id": "b2",
+        "position": {
+          "x": 125.0,
+          "y": 220
+        }
+      },
+      "a_b2_goal": {
+        "id": "a_b2_goal",
+        "position": {
+          "x": 112,
+          "y": 320
+        }
+      },
+      "a_b2_sink": {
+        "id": "a_b2_sink",
+        "position": {
+          "x": 172,
+          "y": 400
+        }
+      },
+      "b3": {
+        "id": "b3",
+        "position": {
+          "x": 275.0,
+          "y": 220
+        }
+      },
+      "a_b3_goal": {
+        "id": "a_b3_goal",
+        "position": {
+          "x": 262,
+          "y": 320
+        }
+      },
+      "a_b3_sink": {
+        "id": "a_b3_sink",
+        "position": {
+          "x": 322,
+          "y": 400
+        }
+      },
+      "b4": {
+        "id": "b4",
+        "position": {
+          "x": 425.0,
+          "y": 220
+        }
+      },
+      "a_b4_goal": {
+        "id": "a_b4_goal",
+        "position": {
+          "x": 412,
+          "y": 320
+        }
+      },
+      "a_b4_sink": {
+        "id": "a_b4_sink",
+        "position": {
+          "x": 472,
+          "y": 400
+        }
+      },
+      "b5": {
+        "id": "b5",
+        "position": {
+          "x": 575.0,
+          "y": 220
+        }
+      },
+      "a_b5_goal": {
+        "id": "a_b5_goal",
+        "position": {
+          "x": 562,
+          "y": 320
+        }
+      },
+      "a_b5_sink": {
+        "id": "a_b5_sink",
+        "position": {
+          "x": 622,
+          "y": 400
+        }
+      },
+      "b6": {
+        "id": "b6",
+        "position": {
+          "x": 725.0,
+          "y": 220
+        }
+      },
+      "a_b6_goal": {
+        "id": "a_b6_goal",
+        "position": {
+          "x": 712,
+          "y": 320
+        }
+      },
+      "a_b6_sink": {
+        "id": "a_b6_sink",
+        "position": {
+          "x": 772,
+          "y": 400
+        }
+      },
+      "b7": {
+        "id": "b7",
+        "position": {
+          "x": 875.0,
+          "y": 220
+        }
+      },
+      "a_b7_goal": {
+        "id": "a_b7_goal",
+        "position": {
+          "x": 862,
+          "y": 320
+        }
+      },
+      "a_b7_sink": {
+        "id": "a_b7_sink",
+        "position": {
+          "x": 922,
+          "y": 400
+        }
+      },
+      "b8": {
+        "id": "b8",
+        "position": {
+          "x": 1025.0,
+          "y": 220
+        }
+      },
+      "a_b8_goal": {
+        "id": "a_b8_goal",
+        "position": {
+          "x": 1012,
+          "y": 320
+        }
+      },
+      "a_b8_sink": {
+        "id": "a_b8_sink",
+        "position": {
+          "x": 1072,
+          "y": 400
+        }
+      },
+      "b9": {
+        "id": "b9",
+        "position": {
+          "x": 1175.0,
+          "y": 220
+        }
+      },
+      "a_b9_goal": {
+        "id": "a_b9_goal",
+        "position": {
+          "x": 1162,
+          "y": 320
+        }
+      },
+      "a_b9_sink": {
+        "id": "a_b9_sink",
+        "position": {
+          "x": 1222,
+          "y": 400
+        }
+      },
+      "b10": {
+        "id": "b10",
+        "position": {
+          "x": 1325.0,
+          "y": 220
+        }
+      },
+      "a_b10_goal": {
+        "id": "a_b10_goal",
+        "position": {
+          "x": 1312,
+          "y": 320
+        }
+      },
+      "a_b10_sink": {
+        "id": "a_b10_sink",
+        "position": {
+          "x": 1372,
+          "y": 400
+        }
+      },
+      "goal": {
+        "id": "goal",
+        "position": {
+          "x": 265.0,
+          "y": 540
+        },
+        "size": {
+          "width": 70,
+          "height": 50
+        }
+      },
+      "sink": {
+        "id": "sink",
+        "position": {
+          "x": 1015.0,
+          "y": 540
+        },
+        "size": {
+          "width": 70,
+          "height": 50
+        }
+      }
+    }
+  }
+}

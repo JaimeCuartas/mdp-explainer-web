@@ -481,3 +481,125 @@ body, html, #root {
   background-color: #fffbeb;
   color: #b45309;
 }
+
+.percentage-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.percentage-slider-label {
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.percentage-slider-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Office-style zoom slider: a thin grey track with a centre tick and a small
+   rectangular thumb. */
+.percentage-slider-range {
+  flex: 1;
+  min-width: 0;
+  height: 16px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.percentage-slider-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.percentage-slider-range:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.percentage-slider-range::-webkit-slider-runnable-track {
+  height: 2px;
+  background:
+    linear-gradient(#6b7280, #6b7280) center / 1px 8px no-repeat,
+    #9ca3af;
+}
+
+.percentage-slider-range::-moz-range-track {
+  height: 2px;
+  background:
+    linear-gradient(#6b7280, #6b7280) center / 1px 8px no-repeat,
+    #9ca3af;
+}
+
+.percentage-slider-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 6px;
+  height: 14px;
+  /* Centres the thumb on the 2px track. */
+  margin-top: -6px;
+  background-color: #374151;
+  border: none;
+  border-radius: 1px;
+}
+
+.percentage-slider-range::-moz-range-thumb {
+  width: 6px;
+  height: 14px;
+  background-color: #374151;
+  border: none;
+  border-radius: 1px;
+}
+
+.percentage-slider-range:hover:not(:disabled)::-webkit-slider-thumb {
+  background-color: #2563eb;
+}
+
+.percentage-slider-range:hover:not(:disabled)::-moz-range-thumb {
+  background-color: #2563eb;
+}
+
+.percentage-slider-field {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 64px;
+  padding: 0 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+.percentage-slider-field:focus-within {
+  border-color: #2563eb;
+}
+
+.percentage-slider-field--disabled {
+  background-color: #f9fafb;
+  opacity: 0.6;
+}
+
+.percentage-slider-input {
+  width: 100%;
+  min-width: 0;
+  padding: 5px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.percentage-slider-suffix {
+  padding-left: 2px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
