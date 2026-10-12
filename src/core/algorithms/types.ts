@@ -20,6 +20,13 @@ export interface ValueIterationResult {
   converged: boolean;
 }
 
+export interface PolicyEvaluationResult {
+  /** stateId -> expected discounted reward when following the current stochastic policy. */
+  values: Record<string, number>;
+  iterations: number;
+  converged: boolean;
+}
+
 export type ReachabilityMode = 'max' | 'min' | 'policy';
 
 export interface ReachabilityOptions {
@@ -32,13 +39,16 @@ export interface ReachabilityOptions {
   policyStateIds?: ReadonlySet<string>;
 }
 
-export interface ReachabilityResult {
+export interface ReachabilityProbabilities {
   /** stateId -> probability of eventually reaching an effect state. */
   probabilities: Record<string, number>;
-  /** stateId -> id of the action achieving that probability, or null. */
-  policy: Record<string, string | null>;
   iterations: number;
   converged: boolean;
+}
+
+export interface ReachabilityResult extends ReachabilityProbabilities {
+  /** stateId -> id of the action achieving that probability, or null. */
+  policy: Record<string, string | null>;
 }
 
 export interface ExplanationOptions extends ReachabilityOptions {

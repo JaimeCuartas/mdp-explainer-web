@@ -1,6 +1,6 @@
 import { Hitman } from './hitman';
 import type { MDPGraph } from './mdpGraph';
-import { computeReachability } from './reachability';
+import { computeReachabilityProbabilities } from './reachability';
 import type { ExplanationOptions, ExplanationResult, ReachabilityBounds } from './types';
 
 const DEFAULT_DEVIATION = 0.2;
@@ -17,12 +17,11 @@ export function computeBounds(
   candidate: readonly string[],
   options: ExplanationOptions = {},
 ): ReachabilityBounds {
-  const { states, actionsByState, transitionsByAction } = graph;
   const reachabilityOptions = { ...options, policyStateIds: new Set(candidate) };
 
   return {
-    min: computeReachability(states, actionsByState, transitionsByAction, 'min', reachabilityOptions).probabilities,
-    max: computeReachability(states, actionsByState, transitionsByAction, 'max', reachabilityOptions).probabilities,
+    min: computeReachabilityProbabilities(graph, 'min', reachabilityOptions).probabilities,
+    max: computeReachabilityProbabilities(graph, 'max', reachabilityOptions).probabilities,
   };
 }
 

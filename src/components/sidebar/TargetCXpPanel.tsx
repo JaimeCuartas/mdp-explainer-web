@@ -3,7 +3,7 @@ import { InlineMath } from 'react-katex';
 import { LoaderCircle } from 'lucide-react';
 import { enumerateXpsTargetCXps } from '../../core/algorithms/explain';
 import { buildMDPGraph } from '../../core/algorithms/mdpGraph';
-import { computeReachabilityProbability } from '../../core/algorithms/reachability';
+import { evaluatePolicyReachability } from '../../core/algorithms/reachability';
 import type { ExplanationResult } from '../../core/algorithms/types';
 import type { ExplanationHighlight, ExplanationKind } from '../../types/explanation';
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
@@ -50,9 +50,7 @@ export function TargetCXpPanel({ states, actions, transitions, highlight, onHigh
     onHighlightChange(null);
     try {
       const initialState = states.find((state) => state.isInitial) ?? states[0];
-      const reference = computeReachabilityProbability(states, actions, transitions, 'policy').probabilities[
-        initialState.id
-      ];
+      const reference = evaluatePolicyReachability(states, actions, transitions).probabilities[initialState.id];
       const explanations = await enumerateXpsTargetCXps(buildMDPGraph(states, actions, transitions), reference);
       setP0(reference);
       setResult(explanations);

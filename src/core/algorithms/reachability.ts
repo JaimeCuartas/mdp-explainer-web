@@ -1,8 +1,10 @@
 import type { MDPState, MDPAction, MDPTransition } from "../../types/mdp";
 import { buildMDPGraph } from "./mdpGraph";
+import type { MDPGraph } from "./mdpGraph";
 import type {
   ReachabilityMode,
   ReachabilityOptions,
+  ReachabilityProbabilities,
   ReachabilityResult,
 } from "./types";
 
@@ -24,41 +26,23 @@ function expectedActionProbability(
 }
 
 /**
- * Computes, for every state, the maximum or minimum probability of eventually
- * reaching a state flagged `isTargetEffect` — the standard MDP model-checking
- * reachability query (PRISM's Pmax=?[F effect] / Pmin=?[F effect]), solved by
- * value iteration with effect states pinned to 1 and dead ends (no actions,
- * not an effect state) pinned to 0.
+ * Computes, for every state, the probability of eventually reaching a state
+ * flagged `isTargetEffect` — the standard MDP model-checking reachability
+ * query (PRISM's Pmax=?[F effect] / Pmin=?[F effect]), solved by value
+ * iteration with effect states pinned to 1 and dead ends (no actions, not an
+ * effect state) pinned to 0. `mode` resolves each state's choice by its best
+ * ('max') or worst ('min') action, or by the stochastic policy ('policy');
+ * states in `options.policyStateIds` always follow the policy.
+ *
+ * Probabilities only: see `computeReachabilityPolicy` for the policy that
+ * achieves the max/min.
  */
-export function computeReachabilityProbability(
-  states: MDPState[],
-  actions: MDPAction[],
-  transitions: MDPTransition[],
+export function computeReachabilityProbabilities(
+  graph: MDPGraph,
   mode: ReachabilityMode,
   options: ReachabilityOptions = {},
-): ReachabilityResult {
-  const { actionsByState, transitionsByAction } = buildMDPGraph(
-    states,
-    actions,
-    transitions,
-  );
-
-  return computeReachability(
-    states,
-    actionsByState,
-    transitionsByAction,
-    mode,
-    options,
-  );
-}
-
-export function computeReachability(
-  states: MDPState[],
-  actionsByState: Map<string, MDPAction[]>,
-  transitionsByAction: Map<string, MDPTransition[]>,
-  mode: ReachabilityMode,
-  options: ReachabilityOptions = {},
-) {
+): ReachabilityProbabilities {
+  const { states, actionsByState, transitionsByAction } = graph;
   const maxIterations = options.maxIterations ?? DEFAULT_MAX_ITERATIONS;
   const tolerance = options.tolerance ?? DEFAULT_TOLERANCE;
   const probabilities: Record<string, number> = {};
@@ -102,7 +86,7 @@ export function computeReachability(
         } else if (stateMode === "min") {
           chosenValue = Math.min(chosenValue, expectedProbability);
         } else {
-          chosenValue += expectedProbability * (action?.policy ?? 0);
+          chosenValue += expectedProbability * (action.policy ?? 0);
         }
       }
       nextProbabilities[state.id] = chosenValue;
@@ -118,29 +102,45 @@ export function computeReachability(
     }
 
     if (maxDelta < tolerance) {
-      console.log("has conv");
       converged = true;
       iterations += 1;
       break;
     }
   }
 
+  return { probabilities, iterations, converged };
+}
+
+/**
+ * The deterministic policy achieving the max ('max') or min ('min')
+ * reachability probability, alongside those probabilities. Effect states get
+ * no action (null): reaching them already ends the query.
+ */
+export function computeReachabilityPolicy(
+  states: MDPState[],
+  actions: MDPAction[],
+  transitions: MDPTransition[],
+  mode: Exclude<ReachabilityMode, "policy">,
+  options: ReachabilityOptions = {},
+): ReachabilityResult {
+  const graph = buildMDPGraph(states, actions, transitions);
+  const result = computeReachabilityProbabilities(graph, mode, options);
+
   const policy: Record<string, string | null> = {};
   for (const state of states) {
     if (state.isTargetEffect) {
       policy[state.id] = null;
+      continue;
     }
-  }
-  for (const state of nonEffectStates) {
 
-    const stateActions = actionsByState.get(state.id) ?? [];
+    const stateActions = graph.actionsByState.get(state.id) ?? [];
     let bestAction: MDPAction | null = null;
     let chosenValue = mode === "max" ? -Infinity : Infinity;
     for (const action of stateActions) {
       const expectedProbability = expectedActionProbability(
         action,
-        transitionsByAction,
-        probabilities,
+        graph.transitionsByAction,
+        result.probabilities,
       );
       const isBetter =
         mode === "max"
@@ -154,7 +154,22 @@ export function computeReachability(
     policy[state.id] = bestAction ? bestAction.id : null;
   }
 
-  console.log(probabilities);
+  return { ...result, policy };
+}
 
-  return { probabilities, policy, iterations, converged };
+/**
+ * The probability of eventually reaching an effect state when every state
+ * follows the current stochastic policy (`action.policy`).
+ */
+export function evaluatePolicyReachability(
+  states: MDPState[],
+  actions: MDPAction[],
+  transitions: MDPTransition[],
+  options: ReachabilityOptions = {},
+): ReachabilityProbabilities {
+  return computeReachabilityProbabilities(
+    buildMDPGraph(states, actions, transitions),
+    "policy",
+    options,
+  );
 }

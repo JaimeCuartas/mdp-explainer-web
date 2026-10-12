@@ -1,6 +1,6 @@
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import { buildMDPGraph } from './mdpGraph';
-import type { ValueIterationOptions, ValueIterationResult } from './types';
+import type { PolicyEvaluationResult, ValueIterationOptions, ValueIterationResult } from './types';
 
 const DEFAULT_DISCOUNT_FACTOR = 0.9;
 const DEFAULT_MAX_ITERATIONS = 1000;
@@ -90,4 +90,55 @@ export function computeOptimalPolicy(
   }
 
   return { values, policy, iterations, converged };
+}
+
+/**
+ * Expected discounted reward of every state when following the current
+ * stochastic policy: V(s) = sum_a pi(a|s) * sum_t p(t) * (r + gamma * V(t')).
+ */
+export function evaluatePolicyValues(
+  states: MDPState[],
+  actions: MDPAction[],
+  transitions: MDPTransition[],
+  options: ValueIterationOptions = {}
+): PolicyEvaluationResult {
+  const discountFactor = options.discountFactor ?? DEFAULT_DISCOUNT_FACTOR;
+  const maxIterations = options.maxIterations ?? DEFAULT_MAX_ITERATIONS;
+  const tolerance = options.tolerance ?? DEFAULT_TOLERANCE;
+
+  const { actionsByState, transitionsByAction } = buildMDPGraph(states, actions, transitions);
+
+  const values: Record<string, number> = {};
+  for (const state of states) {
+    values[state.id] = 0;
+  }
+
+  let iterations = 0;
+  let converged = false;
+
+  for (; iterations < maxIterations; iterations++) {
+    const nextValues: Record<string, number> = {};
+
+    for (const state of states) {
+      let value = 0;
+      for (const action of actionsByState.get(state.id) ?? []) {
+        value += (action.policy ?? 0) * expectedActionValue(action, transitionsByAction, values, discountFactor);
+      }
+      nextValues[state.id] = value;
+    }
+
+    let maxDelta = 0;
+    for (const state of states) {
+      maxDelta = Math.max(maxDelta, Math.abs(nextValues[state.id] - values[state.id]));
+      values[state.id] = nextValues[state.id];
+    }
+
+    if (maxDelta < tolerance) {
+      converged = true;
+      iterations += 1;
+      break;
+    }
+  }
+
+  return { values, iterations, converged };
 }

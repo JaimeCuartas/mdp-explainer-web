@@ -4,7 +4,7 @@ import { AppHeader } from './components/layout/AppHeader';
 import { InspectorPanel } from './components/inspector/InspectorPanel';
 import { ToolbarPanel } from './components/sidebar/ToolbarPanel';
 import { PoliciesPanel } from './components/sidebar/PoliciesPanel';
-import { ProbabilitiesPanel } from './components/sidebar/ProbabilitiesPanel';
+import { PolicyEvaluationPanel } from './components/sidebar/PolicyEvaluationPanel';
 import { TargetCXpPanel } from './components/sidebar/TargetCXpPanel';
 import { useMDP, DEFAULT_NODE_SIZE } from './hooks/useMDP';
 import { exportMDPToFile, importMDPFromFile } from './core/serializers/jsonSerializer';
@@ -42,6 +42,8 @@ function App() {
   const [selectedActionId, setSelectedActionId] = useState<string | null>(null);
   const [selectedTransitionId, setSelectedTransitionId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // Set in the Policies accordion; Policy Evaluation also uses it to discount V^pi.
+  const [discountFactor, setDiscountFactor] = useState(0.9);
   const [explanationHighlight, setExplanationHighlight] = useState<ExplanationHighlight | null>(null);
 
   const selectedState = states.find((state) => state.id === selectedStateId) ?? null;
@@ -173,14 +175,17 @@ function App() {
             actions={actions}
             transitions={transitions}
             selectedStateId={selectedStateId}
+            discountFactor={discountFactor}
+            onDiscountFactorChange={setDiscountFactor}
             onUpdateAction={updateAction}
           />
 
-          <ProbabilitiesPanel
+          <PolicyEvaluationPanel
             states={states}
             actions={actions}
             transitions={transitions}
             selectedStateId={selectedStateId}
+            discountFactor={discountFactor}
           />
 
           <TargetCXpPanel
