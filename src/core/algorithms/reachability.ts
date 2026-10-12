@@ -62,15 +62,15 @@ export function computeReachability(
   const maxIterations = options.maxIterations ?? DEFAULT_MAX_ITERATIONS;
   const tolerance = options.tolerance ?? DEFAULT_TOLERANCE;
   const probabilities: Record<string, number> = {};
-  const nonEffectStates: MDPState[] = []
+  const nonEffectStates: MDPState[] = [];
 
-  for (const state of states){
-      if (state.isTargetEffect) {
-          probabilities[state.id] = 1;
-      } else {
-          probabilities[state.id] = 0;
-          nonEffectStates.push(state);
-      }
+  for (const state of states) {
+    if (state.isTargetEffect) {
+      probabilities[state.id] = 1;
+    } else {
+      probabilities[state.id] = 0;
+      nonEffectStates.push(state);
+    }
   }
 
   let iterations = 0;
@@ -80,28 +80,26 @@ export function computeReachability(
     const nextProbabilities: Record<string, number> = {};
 
     for (const state of nonEffectStates) {
-
       const stateActions = actionsByState.get(state.id) ?? [];
       if (stateActions.length === 0) {
         nextProbabilities[state.id] = 0;
         continue;
       }
 
-      let chosenValue = mode === "max" ? -Infinity : mode === "min" ? Infinity : 0.0;
+      let chosenValue =
+        mode === "max" ? -Infinity : mode === "min" ? Infinity : 0.0;
       for (const action of stateActions) {
         const expectedProbability = expectedActionProbability(
           action,
           transitionsByAction,
           probabilities,
         );
-        if (mode === "max"){
-            chosenValue = Math.max(chosenValue, expectedProbability);
-        }
-        else if (mode === "min"){
-            chosenValue = Math.min(chosenValue, expectedProbability);
-        }
-        else {
-            chosenValue += expectedProbability*(action?.policy ?? 0);
+        if (mode === "max") {
+          chosenValue = Math.max(chosenValue, expectedProbability);
+        } else if (mode === "min") {
+          chosenValue = Math.min(chosenValue, expectedProbability);
+        } else {
+          chosenValue += expectedProbability * (action?.policy ?? 0);
         }
       }
       nextProbabilities[state.id] = chosenValue;
@@ -126,10 +124,11 @@ export function computeReachability(
 
   const policy: Record<string, string | null> = {};
   for (const state of states) {
-    if (effectStateIds.has(state.id)) {
+    if (state.isTargetEffect) {
       policy[state.id] = null;
-      continue;
     }
+  }
+  for (const state of nonEffectStates) {
 
     const stateActions = actionsByState.get(state.id) ?? [];
     let bestAction: MDPAction | null = null;

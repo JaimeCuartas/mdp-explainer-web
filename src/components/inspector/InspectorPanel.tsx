@@ -207,9 +207,5 @@ export function InspectorPanel({
     );
   }
 
-  return (
-    <div className="inspector-panel inspector-empty">
-      <p>Select a state, action, or transition on the canvas to inspect its properties.</p>
-    </div>
-  );
+  return null;
 }

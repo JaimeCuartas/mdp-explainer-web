@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import { Activity } from 'lucide-react';
 import { MDPFlowCanvas } from './components/canvas/MDPFlowCanvas';
+import { AppHeader } from './components/layout/AppHeader';
+import { InspectorPanel } from './components/inspector/InspectorPanel';
 import { ToolbarPanel } from './components/sidebar/ToolbarPanel';
-import { InspectorPanel } from './components/sidebar/InspectorPanel';
 import { PoliciesPanel } from './components/sidebar/PoliciesPanel';
 import { ProbabilitiesPanel } from './components/sidebar/ProbabilitiesPanel';
 import { ExplainabilityPanel } from './components/sidebar/ExplainabilityPanel';
@@ -40,6 +40,7 @@ function App() {
   const [selectedStateId, setSelectedStateId] = useState<string | null>(null);
   const [selectedActionId, setSelectedActionId] = useState<string | null>(null);
   const [selectedTransitionId, setSelectedTransitionId] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const selectedState = states.find((state) => state.id === selectedStateId) ?? null;
   const selectedStateSize = selectedState ? (nodeSizes[selectedState.id] ?? DEFAULT_NODE_SIZE) : null;
@@ -148,86 +149,87 @@ function App() {
 
   return (
     <div className="app-container">
-      <MDPFlowCanvas
-        states={states}
-        actions={actions}
-        transitions={transitions}
-        nodePositions={nodePositions}
-        nodeSizes={nodeSizes}
-        actionPositions={actionPositions}
-        selectedStateId={selectedStateId}
-        selectedActionId={selectedActionId}
-        selectedTransitionId={selectedTransitionId}
-        onNodeDragStop={updateNodePosition}
-        onActionDragStop={updateActionPosition}
-        onNodeResize={updateNodeSize}
-        onSelectState={handleSelectState}
-        onSelectAction={handleSelectAction}
-        onSelectTransition={handleSelectTransition}
-        onClearSelection={handleClearSelection}
-        onAddState={addState}
-        onConnectStateToAction={handleConnectStateToAction}
-        onConnectActionToState={handleConnectActionToState}
-        onCreateActionFromState={addActionWithState}
-        onCreateStateFromAction={addStateWithAction}
-        onDeleteState={handleDeleteState}
-        onDeleteAction={handleDeleteAction}
-        onDeleteTransition={handleDeleteTransition}
-        onUpdateTransition={updateTransition}
+      <AppHeader
+        title={title}
+        isSidebarOpen={isSidebarOpen}
+        onTitleChange={setTitle}
+        onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
       />
 
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <Activity size={20} color="#2563eb" />
-          <input
-            type="text"
-            className="mdp-title-input"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            aria-label="MDP title"
+      <div className="app-body">
+        {/* Kept mounted while closed so the panels don't lose their open sections and computed results. */}
+        <aside id="app-sidebar" className={`sidebar${isSidebarOpen ? '' : ' sidebar--closed'}`}>
+          <ToolbarPanel
+            onSave={handleSave}
+            onOpen={handleOpen}
+            onReset={handleReset}
+            onExportMiniZinc={handleExportMiniZinc}
           />
-        </div>
 
-        <ToolbarPanel
-          onSave={handleSave}
-          onOpen={handleOpen}
-          onReset={handleReset}
-          onExportMiniZinc={handleExportMiniZinc}
-        />
+          <PoliciesPanel
+            states={states}
+            actions={actions}
+            transitions={transitions}
+            selectedStateId={selectedStateId}
+            onUpdateAction={updateAction}
+          />
 
-        <PoliciesPanel
-          states={states}
-          actions={actions}
-          transitions={transitions}
-          selectedStateId={selectedStateId}
-          onUpdateAction={updateAction}
-        />
+          <ProbabilitiesPanel
+            states={states}
+            actions={actions}
+            transitions={transitions}
+            selectedStateId={selectedStateId}
+          />
 
-        <ProbabilitiesPanel
-          states={states}
-          actions={actions}
-          transitions={transitions}
-          selectedStateId={selectedStateId}
-        />
+          <ExplainabilityPanel />
+        </aside>
 
-        <ExplainabilityPanel />
+        <main className="canvas-area">
+          <MDPFlowCanvas
+            states={states}
+            actions={actions}
+            transitions={transitions}
+            nodePositions={nodePositions}
+            nodeSizes={nodeSizes}
+            actionPositions={actionPositions}
+            selectedStateId={selectedStateId}
+            selectedActionId={selectedActionId}
+            selectedTransitionId={selectedTransitionId}
+            onNodeDragStop={updateNodePosition}
+            onActionDragStop={updateActionPosition}
+            onNodeResize={updateNodeSize}
+            onSelectState={handleSelectState}
+            onSelectAction={handleSelectAction}
+            onSelectTransition={handleSelectTransition}
+            onClearSelection={handleClearSelection}
+            onAddState={addState}
+            onConnectStateToAction={handleConnectStateToAction}
+            onConnectActionToState={handleConnectActionToState}
+            onCreateActionFromState={addActionWithState}
+            onCreateStateFromAction={addStateWithAction}
+            onDeleteState={handleDeleteState}
+            onDeleteAction={handleDeleteAction}
+            onDeleteTransition={handleDeleteTransition}
+            onUpdateTransition={updateTransition}
+          />
 
-        <InspectorPanel
-          selectedState={selectedState}
-          selectedAction={selectedAction}
-          selectedTransition={selectedTransition}
-          actions={actions}
-          states={states}
-          stateSize={selectedStateSize}
-          onUpdateState={updateState}
-          onUpdateStateSize={updateNodeSize}
-          onUpdateAction={updateAction}
-          onUpdateTransition={updateTransition}
-          onDeleteState={handleDeleteState}
-          onDeleteAction={handleDeleteAction}
-          onDeleteTransition={handleDeleteTransition}
-        />
-      </aside>
+          <InspectorPanel
+            selectedState={selectedState}
+            selectedAction={selectedAction}
+            selectedTransition={selectedTransition}
+            actions={actions}
+            states={states}
+            stateSize={selectedStateSize}
+            onUpdateState={updateState}
+            onUpdateStateSize={updateNodeSize}
+            onUpdateAction={updateAction}
+            onUpdateTransition={updateTransition}
+            onDeleteState={handleDeleteState}
+            onDeleteAction={handleDeleteAction}
+            onDeleteTransition={handleDeleteTransition}
+          />
+        </main>
+      </div>
     </div>
   );
 }
