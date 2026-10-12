@@ -21,7 +21,8 @@ export function ActionEdge({
   const [edgePath, labelX, labelY] = getStraightPath({ sourceX, sourceY, targetX, targetY });
 
   const label = data?.label ?? '';
-  const labelMath = data?.policy !== undefined ? `${label} (${data.policy})` : label;
+  // Rounded for display only, so e.g. a uniform 1/3 reads 0.333 while staying exact in the model.
+  const labelMath = data?.policy !== undefined ? `${label} (${Number(data.policy.toFixed(3))})` : label;
 
   return (
     <>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { InlineMath } from 'react-katex';
 import { computeOptimalPolicy } from '../../core/algorithms/valueIteration';
 import { computeReachabilityPolicy } from '../../core/algorithms/reachability';
+import { computeUniformPolicy } from '../../core/algorithms/uniformPolicy';
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import { AccordionSection } from './AccordionSection';
 
@@ -39,6 +40,15 @@ export function PoliciesPanel({
       if (chosenActionId) {
         onUpdateAction(action.id, { policy: action.id === chosenActionId ? 1 : 0 });
       }
+    }
+  };
+
+  // Stochastic, so there's no single chosen action per state to show afterwards.
+  const applyUniformPolicy = () => {
+    setPolicy(null);
+    const uniformPolicy = computeUniformPolicy(actions);
+    for (const action of actions) {
+      onUpdateAction(action.id, { policy: uniformPolicy[action.id] });
     }
   };
 
@@ -88,6 +98,10 @@ export function PoliciesPanel({
         onClick={() => applyPolicy(computeReachabilityPolicy(states, actions, transitions, 'min').policy)}
       >
         Worst-Case Reachability
+      </button>
+
+      <button type="button" className="action-button secondary" onClick={applyUniformPolicy}>
+        Uniform Policy
       </button>
 
       {policy &&
