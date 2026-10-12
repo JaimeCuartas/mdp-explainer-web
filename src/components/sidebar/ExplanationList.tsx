@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { InlineMath } from 'react-katex';
+import { ChevronDown } from 'lucide-react';
 import type { ExplanationKind } from '../../types/explanation';
 
 interface ExplanationListProps {
@@ -11,14 +13,24 @@ interface ExplanationListProps {
 }
 
 export function ExplanationList({ title, variant, sets, labelOf, selectedIndex, onSelect }: ExplanationListProps) {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <section className={`xp-list xp-list--${variant}`}>
-      <header className="xp-list-header">
+      <button
+        type="button"
+        className="xp-list-header"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
         <span>{title}</span>
-        <span className="xp-list-count">{sets.length}</span>
-      </header>
+        <span className="xp-list-header-end">
+          <span className="xp-list-count">{sets.length}</span>
+          <ChevronDown size={16} className={`accordion-chevron${isOpen ? ' accordion-chevron--open' : ''}`} />
+        </span>
+      </button>
 
-      {sets.length === 0 ? (
+      {!isOpen ? null : sets.length === 0 ? (
         <p className="xp-list-empty">None found.</p>
       ) : (
         // Scrolls on its own so a long enumeration doesn't push the rest of the sidebar away.
