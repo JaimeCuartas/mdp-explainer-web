@@ -1,34 +1,11 @@
 import { Hitman } from './hitman';
 import type { MDPGraph } from './mdpGraph';
 import { computeReachabilityProbabilities } from './reachability';
-import type { ExplanationOptions, ExplanationResult, ReachabilityBounds } from './types';
+import type { ExplanationOptions, ExplanationResult } from './types';
 
 const DEFAULT_DEVIATION = 0.2;
-// Slack on the threshold checks so value-iteration noise doesn't flip a verdict.
 const THRESHOLD_SLACK = 1e-5;
 
-/**
- * Min/max reachability when the candidate states keep following the policy and
- * every other non-effect state is free to pick its worst (min) or best (max)
- * action.
- */
-export function computeBounds(
-  graph: MDPGraph,
-  candidate: readonly string[],
-  options: ExplanationOptions = {},
-): ReachabilityBounds {
-  const reachabilityOptions = { ...options, policyStateIds: new Set(candidate) };
-
-  return {
-    min: computeReachabilityProbabilities(graph, 'min', reachabilityOptions).probabilities,
-    max: computeReachabilityProbabilities(graph, 'max', reachabilityOptions).probabilities,
-  };
-}
-
-/**
- * Whether fixing the candidate states to the policy is sufficient to keep the
- * initial state's reachability within the allowed deviation of p0.
- */
 export function isAXp(
   graph: MDPGraph,
   candidate: readonly string[],
@@ -41,20 +18,21 @@ export function isAXp(
   }
 
   const deviation = options.deviation ?? DEFAULT_DEVIATION;
+  const reachabilityOptions = { ...options, policyStateIds: new Set(candidate) };
+
   const minThreshold = p0 * (1 - deviation);
+  const minProb = computeReachabilityProbabilities(graph, 'min', reachabilityOptions).probabilities[initialState.id];
+
+  if (minProb < minThreshold -THRESHOLD_SLACK ){
+    return false;
+  }
+
   const maxThreshold = Math.min(1, p0 * (1 + deviation));
+  const maxProb = computeReachabilityProbabilities(graph, 'max', reachabilityOptions).probabilities[initialState.id];
 
-  const bounds = computeBounds(graph, candidate, options);
-  const reachMin = bounds.min[initialState.id];
-  const reachMax = bounds.max[initialState.id];
-
-  return reachMin >= minThreshold - THRESHOLD_SLACK && reachMax <= maxThreshold + THRESHOLD_SLACK;
+  return maxProb <= maxThreshold + THRESHOLD_SLACK;
 }
 
-/**
- * Deletion-based reduction of a sufficient candidate to a subset-minimal AXp.
- * Returns [] if the candidate is not sufficient to begin with.
- */
 export function shrink(
   graph: MDPGraph,
   candidate: readonly string[],
@@ -77,12 +55,35 @@ export function shrink(
   return currentCandidate;
 }
 
-/**
- * Enumerates all AXps (and, as a by-product, CXps) over the non-effect states
- * via AXp/CXp hitting-set duality: each minimal hitting set proposed by the
- * Hitman is either a CXp (its complement is not sufficient) or its complement
- * shrinks to a new AXp.
- */
+export function grow(
+  graph: MDPGraph,
+  candidate: readonly string[],
+  allNonEffectIds: readonly string[],
+  p0: number,
+  options: ExplanationOptions = {},
+): string[] {
+  const candidateSet = new Set(candidate);
+  const initialFixedIds = allNonEffectIds.filter((id) => !candidateSet.has(id));
+
+  if (isAXp(graph, initialFixedIds, p0, options)) {
+    return [];
+  }
+
+  const fixedSet = new Set(initialFixedIds);
+  const minimalCXp: string[] = [];
+
+  for (const stateId of candidate) {
+    if (!isAXp(graph, [...fixedSet, stateId], p0, options)) {
+      fixedSet.add(stateId);
+    } else {
+      minimalCXp.push(stateId);
+    }
+  }
+
+  return minimalCXp;
+}
+
+
 export async function enumerateXpsTargetCXps(
   graph: MDPGraph,
   p0: number,
@@ -93,23 +94,64 @@ export async function enumerateXpsTargetCXps(
   const cxps: string[][] = [];
 
   const hitman = await Hitman.create<string>();
-  for (;;) {
-    const candidate = await hitman.get();
-    if (candidate === null) {
-      break;
-    }
+  try {
+    for (;;) {
+      const candidate = await hitman.get();
+      if (candidate === null) {
+        break;
+      }
 
-    const candidateIds = new Set(candidate);
-    const complement = nonEffectStateIds.filter((id) => !candidateIds.has(id));
+      const candidateIds = new Set(candidate);
+      const complement = nonEffectStateIds.filter((id) => !candidateIds.has(id));
 
-    if (isAXp(graph, complement, p0, options)) {
-      const axp = shrink(graph, complement, p0, options);
-      axps.push(axp);
-      hitman.hit(axp);
-    } else {
-      cxps.push(candidate);
-      hitman.block(candidate);
+      if (isAXp(graph, complement, p0, options)) {
+        const axp = shrink(graph, complement, p0, options);
+        axps.push(axp);
+        hitman.hit(axp);
+      } else {
+        cxps.push(candidate);
+        hitman.block(candidate);
+      }
     }
+  } finally {
+    hitman.release();
+  }
+
+  return { axps, cxps };
+}
+
+
+export async function enumerateXpsTargetAXps(
+  graph: MDPGraph,
+  p0: number,
+  options: ExplanationOptions = {},
+): Promise<ExplanationResult> {
+  const nonEffectStateIds = graph.states.filter((state) => !state.isTargetEffect).map((state) => state.id);
+  const axps: string[][] = [];
+  const cxps: string[][] = [];
+
+  const hitman = await Hitman.create<string>();
+  try {
+    for (;;) {
+      const candidate = await hitman.get();
+      if (candidate === null) {
+        break;
+      }
+
+      if (isAXp(graph, candidate, p0, options)) {
+        axps.push(candidate);
+        hitman.block(candidate);
+      } else {
+        const candidateSet = new Set(candidate);
+        const complement = nonEffectStateIds.filter((id) => !candidateSet.has(id));
+
+        const cxp = grow(graph, complement,nonEffectStateIds, p0, options);
+        cxps.push(cxp);
+        hitman.hit(cxp);
+      }
+    }
+  } finally {
+    hitman.release();
   }
 
   return { axps, cxps };
