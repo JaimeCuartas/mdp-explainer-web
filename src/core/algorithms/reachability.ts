@@ -25,18 +25,6 @@ function expectedActionProbability(
   return expectedProbability;
 }
 
-/**
- * Computes, for every state, the probability of eventually reaching a state
- * flagged `isTargetEffect` — the standard MDP model-checking reachability
- * query (PRISM's Pmax=?[F effect] / Pmin=?[F effect]), solved by value
- * iteration with effect states pinned to 1 and dead ends (no actions, not an
- * effect state) pinned to 0. `mode` resolves each state's choice by its best
- * ('max') or worst ('min') action, or by the stochastic policy ('policy');
- * states in `options.policyStateIds` always follow the policy.
- *
- * Probabilities only: see `computeReachabilityPolicy` for the policy that
- * achieves the max/min.
- */
 export function computeReachabilityProbabilities(
   graph: MDPGraph,
   mode: ReachabilityMode,
@@ -111,15 +99,8 @@ export function computeReachabilityProbabilities(
   return { probabilities, iterations, converged };
 }
 
-// Q-values within this of a state's optimal value count as optimal: exact ties
-// (common with loops) come out of value iteration a few ulps apart.
 const OPTIMALITY_TOLERANCE = 1e-6;
 
-/**
- * stateId -> the actions achieving that state's max/min probability, for every
- * non-effect state (an empty list for dead ends). An optimal action's expected
- * probability equals the state's own, whichever of max/min it was computed by.
- */
 function optimalActions(
   graph: MDPGraph,
   probabilities: Record<string, number>,
@@ -143,10 +124,6 @@ function optimalActions(
   return optimalActionsByState;
 }
 
-/**
- * Min reachability: any optimal action per state gives an optimal policy, since
- * looping without ever reaching an effect state only lowers the probability.
- */
 function extractMinPolicy(
   optimalActionsByState: Map<string, MDPAction[]>,
 ): Record<string, string | null> {
@@ -159,15 +136,6 @@ function extractMinPolicy(
   return policy;
 }
 
-/**
- * Max reachability: any optimal action per state is not enough, since optimal
- * actions can form a loop that never reaches an effect state (e.g. s -a-> s2
- * -c-> s ties with s -b-> effect, yet looping reaches it with probability 0).
- * So first pick optimal actions backwards from the effect states, only choosing
- * one that moves with positive probability into an already-reached state; the
- * states left over cannot reach an effect state at all, and for them any
- * optimal action will do, as for min.
- */
 function extractMaxPolicy(
   graph: MDPGraph,
   optimalActionsByState: Map<string, MDPAction[]>,
@@ -207,11 +175,6 @@ function extractMaxPolicy(
   return policy;
 }
 
-/**
- * The deterministic policy achieving the max ('max') or min ('min')
- * reachability probability, alongside those probabilities. Effect states get
- * no action (null): reaching them already ends the query.
- */
 export function computeReachabilityPolicy(
   states: MDPState[],
   actions: MDPAction[],
@@ -227,7 +190,6 @@ export function computeReachabilityPolicy(
     mode === "max"
       ? extractMaxPolicy(graph, optimalActionsByState)
       : extractMinPolicy(optimalActionsByState);
-  // Reaching an effect state already ends the query: nothing to choose there.
   for (const state of states) {
     if (state.isTargetEffect) {
       policy[state.id] = null;
@@ -237,10 +199,6 @@ export function computeReachabilityPolicy(
   return { ...result, policy };
 }
 
-/**
- * The probability of eventually reaching an effect state when every state
- * follows the current stochastic policy (`action.policy`).
- */
 export function evaluatePolicyReachability(
   states: MDPState[],
   actions: MDPAction[],
