@@ -1,9 +1,10 @@
 import { Hitman } from './hitman';
 import type { MDPGraph } from './mdpGraph';
 import { computeReachabilityProbabilities } from './reachability';
-import type { ExplanationOptions, ExplanationResult } from './types';
+import type { ExplanationBound, ExplanationOptions, ExplanationResult } from './types';
 
 const DEFAULT_DEVIATION = 0.2;
+const DEFAULT_BOUND: ExplanationBound = 'min';
 const THRESHOLD_SLACK = 1e-5;
 
 export function isAXp(
@@ -18,19 +19,26 @@ export function isAXp(
   }
 
   const deviation = options.deviation ?? DEFAULT_DEVIATION;
+  const bound = options.bound ?? DEFAULT_BOUND;
   const reachabilityOptions = { ...options, policyStateIds: new Set(candidate) };
 
-  const minThreshold = p0 * (1 - deviation);
-  const minProb = computeReachabilityProbabilities(graph, 'min', reachabilityOptions).probabilities[initialState.id];
-
-  if (minProb < minThreshold -THRESHOLD_SLACK ){
-    return false;
+  if (bound !== 'max') {
+    const minThreshold = p0 * (1 - deviation);
+    const minProb = computeReachabilityProbabilities(graph, 'min', reachabilityOptions).probabilities[initialState.id];
+    if (minProb < minThreshold - THRESHOLD_SLACK) {
+      return false;
+    }
   }
 
-  const maxThreshold = Math.min(1, p0 * (1 + deviation));
-  const maxProb = computeReachabilityProbabilities(graph, 'max', reachabilityOptions).probabilities[initialState.id];
+  if (bound !== 'min') {
+    const maxThreshold = Math.min(1, p0 * (1 + deviation));
+    const maxProb = computeReachabilityProbabilities(graph, 'max', reachabilityOptions).probabilities[initialState.id];
+    if (maxProb > maxThreshold + THRESHOLD_SLACK) {
+      return false;
+    }
+  }
 
-  return maxProb <= maxThreshold + THRESHOLD_SLACK;
+  return true;
 }
 
 export function shrink(

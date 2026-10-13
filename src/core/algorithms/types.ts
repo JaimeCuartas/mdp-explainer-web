@@ -51,6 +51,13 @@ export interface ReachabilityResult extends ReachabilityProbabilities {
   policy: Record<string, string | null>;
 }
 
+/**
+ * Which side of the allowed range an AXp must guarantee: 'min' checks only the
+ * lower bound (min reachability >= threshold), 'max' only the upper bound
+ * (max reachability <= threshold), 'both' the whole range.
+ */
+export type ExplanationBound = 'min' | 'max' | 'both';
+
 export interface ExplanationOptions extends ReachabilityOptions {
   /**
    * Allowed relative deviation from the reference probability p0: a candidate
@@ -58,6 +65,8 @@ export interface ExplanationOptions extends ReachabilityOptions {
    * [p0 * (1 - deviation), min(1, p0 * (1 + deviation))].
    */
   deviation?: number;
+  /** Bounds that isAXp checks; defaults to 'min'. */
+  bound?: ExplanationBound;
 }
 
 export interface ReachabilityBounds {
