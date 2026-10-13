@@ -4,14 +4,24 @@ import { LoaderCircle } from 'lucide-react';
 import { enumerateXpsTargetAXps, enumerateXpsTargetCXps } from '../../core/algorithms/explain';
 import { buildMDPGraph } from '../../core/algorithms/mdpGraph';
 import { evaluatePolicyReachability } from '../../core/algorithms/reachability';
-import type { ExplanationResult } from '../../core/algorithms/types';
+import type { ExplanationBound, ExplanationResult } from '../../core/algorithms/types';
 import type { ExplanationHighlight, ExplanationKind } from '../../types/explanation';
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import { ExplanationList } from './ExplanationList';
 import { PercentageSlider } from './PercentageSlider';
+import { SegmentedControl } from './SegmentedControl';
+import type { SegmentedOption } from './SegmentedControl';
 
 // Allowed relative deviation from p0, as a percentage (options.deviation = 0.20).
 const DEFAULT_DEVIATION_PERCENT = 20;
+
+// Which bounds of the allowed range isAXp checks.
+const BOUND_OPTIONS: readonly SegmentedOption<ExplanationBound>[] = [
+  { value: 'min', label: 'Min Only (≥)' },
+  { value: 'max', label: 'Max Only (≤)' },
+  { value: 'both', label: 'Both (Range)' },
+];
+const DEFAULT_BOUND: ExplanationBound = 'min';
 
 const ENUMERATIONS: Record<ExplanationKind, { label: string; enumerate: typeof enumerateXpsTargetCXps }> = {
   cxp: { label: 'Target CXp', enumerate: enumerateXpsTargetCXps },
@@ -40,6 +50,7 @@ export function ExplanationsPanel({
   const isRunning = runningTarget !== null;
   const [error, setError] = useState<string | null>(null);
   const [deviationPercent, setDeviationPercent] = useState(DEFAULT_DEVIATION_PERCENT);
+  const [bound, setBound] = useState<ExplanationBound>(DEFAULT_BOUND);
 
   const hasEffectStates = states.some((state) => state.isTargetEffect);
   const labelById = new Map(states.map((state) => [state.id, state.label]));
@@ -71,6 +82,7 @@ export function ExplanationsPanel({
       const reference = evaluatePolicyReachability(states, actions, transitions).probabilities[initialState.id];
       const explanations = await ENUMERATIONS[target].enumerate(buildMDPGraph(states, actions, transitions), reference, {
         deviation: deviationPercent / 100,
+        bound,
       });
       setP0(reference);
       setResult(explanations);
@@ -107,6 +119,14 @@ export function ExplanationsPanel({
         value={deviationPercent}
         disabled={isRunning}
         onChange={setDeviationPercent}
+      />
+
+      <SegmentedControl
+        label="AXp check"
+        options={BOUND_OPTIONS}
+        value={bound}
+        disabled={isRunning}
+        onChange={setBound}
       />
 
       {error && <p className="xp-error">{error}</p>}

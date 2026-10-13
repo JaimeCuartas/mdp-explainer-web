@@ -613,3 +613,59 @@ body, html, #root {
   font-size: 0.85rem;
   color: #6b7280;
 }
+
+/* Segmented control: one bordered strip of mutually exclusive options, the
+   selected one filled. */
+.segmented-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.segmented-control-label {
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.segmented-control-options {
+  display: flex;
+  padding: 2px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f3f4f6;
+}
+
+.segmented-control-option {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 4px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #374151;
+  font: inherit;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.segmented-control-option:hover:not(:disabled):not(.segmented-control-option--selected) {
+  background-color: #e5e7eb;
+}
+
+.segmented-control-option--selected {
+  background-color: #ffffff;
+  color: #1d4ed8;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.segmented-control-option:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.segmented-control-option:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
