@@ -345,6 +345,16 @@ body, html, #root {
   flex-shrink: 0;
 }
 
+.xp-run-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.xp-run-buttons .action-button {
+  flex: 1;
+  min-width: 0;
+}
+
 .xp-error {
   font-size: 0.85rem;
   color: #dc2626;

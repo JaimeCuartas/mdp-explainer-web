@@ -5,7 +5,7 @@ import { InspectorPanel } from './components/inspector/InspectorPanel';
 import { ToolbarPanel } from './components/sidebar/ToolbarPanel';
 import { PoliciesPanel } from './components/sidebar/PoliciesPanel';
 import { PolicyEvaluationPanel } from './components/sidebar/PolicyEvaluationPanel';
-import { TargetCXpPanel } from './components/sidebar/TargetCXpPanel';
+import { ExplanationsPanel } from './components/sidebar/ExplanationsPanel';
 import { useMDP, DEFAULT_NODE_SIZE } from './hooks/useMDP';
 import { exportMDPToFile, importMDPFromFile } from './core/serializers/jsonSerializer';
 import { exportMDPToMiniZincDzn } from './core/serializers/minizincSerializer';
@@ -188,7 +188,7 @@ function App() {
             discountFactor={discountFactor}
           />
 
-          <TargetCXpPanel
+          <ExplanationsPanel
             states={states}
             actions={actions}
             transitions={transitions}

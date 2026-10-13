@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { InlineMath } from 'react-katex';
 import { LoaderCircle } from 'lucide-react';
-import { enumerateXpsTargetCXps } from '../../core/algorithms/explain';
+import { enumerateXpsTargetAXps, enumerateXpsTargetCXps } from '../../core/algorithms/explain';
 import { buildMDPGraph } from '../../core/algorithms/mdpGraph';
 import { evaluatePolicyReachability } from '../../core/algorithms/reachability';
 import type { ExplanationResult } from '../../core/algorithms/types';
@@ -13,7 +13,12 @@ import { PercentageSlider } from './PercentageSlider';
 // Allowed relative deviation from p0, as a percentage (options.deviation = 0.20).
 const DEFAULT_DEVIATION_PERCENT = 20;
 
-interface TargetCXpPanelProps {
+const ENUMERATIONS: Record<ExplanationKind, { label: string; enumerate: typeof enumerateXpsTargetCXps }> = {
+  cxp: { label: 'Target CXp', enumerate: enumerateXpsTargetCXps },
+  axp: { label: 'Target AXp', enumerate: enumerateXpsTargetAXps },
+};
+
+interface ExplanationsPanelProps {
   states: MDPState[];
   actions: MDPAction[];
   transitions: MDPTransition[];
@@ -21,10 +26,18 @@ interface TargetCXpPanelProps {
   onHighlightChange: (highlight: ExplanationHighlight | null) => void;
 }
 
-export function TargetCXpPanel({ states, actions, transitions, highlight, onHighlightChange }: TargetCXpPanelProps) {
+export function ExplanationsPanel({
+  states,
+  actions,
+  transitions,
+  highlight,
+  onHighlightChange,
+}: ExplanationsPanelProps) {
   const [result, setResult] = useState<ExplanationResult | null>(null);
   const [p0, setP0] = useState<number | null>(null);
-  const [isRunning, setIsRunning] = useState(false);
+  // Which enumeration is running, if any; both fill the same AXp and CXp lists.
+  const [runningTarget, setRunningTarget] = useState<ExplanationKind | null>(null);
+  const isRunning = runningTarget !== null;
   const [error, setError] = useState<string | null>(null);
   const [deviationPercent, setDeviationPercent] = useState(DEFAULT_DEVIATION_PERCENT);
 
@@ -49,14 +62,14 @@ export function TargetCXpPanel({ states, actions, transitions, highlight, onHigh
     onHighlightChange(isAlreadySelected ? null : { kind, index, stateIds });
   };
 
-  const handleRun = async () => {
-    setIsRunning(true);
+  const handleRun = async (target: ExplanationKind) => {
+    setRunningTarget(target);
     setError(null);
     onHighlightChange(null);
     try {
       const initialState = states.find((state) => state.isInitial) ?? states[0];
       const reference = evaluatePolicyReachability(states, actions, transitions).probabilities[initialState.id];
-      const explanations = await enumerateXpsTargetCXps(buildMDPGraph(states, actions, transitions), reference, {
+      const explanations = await ENUMERATIONS[target].enumerate(buildMDPGraph(states, actions, transitions), reference, {
         deviation: deviationPercent / 100,
       });
       setP0(reference);
@@ -64,7 +77,7 @@ export function TargetCXpPanel({ states, actions, transitions, highlight, onHigh
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setIsRunning(false);
+      setRunningTarget(null);
     }
   };
 
@@ -74,10 +87,20 @@ export function TargetCXpPanel({ states, actions, transitions, highlight, onHigh
         <p className="inspector-meta">Mark at least one state as "Target Effect" in its Inspector first.</p>
       )}
 
-      <button type="button" className="action-button" disabled={!hasEffectStates || isRunning} onClick={handleRun}>
-        {isRunning && <LoaderCircle size={16} className="spin" />}
-        {isRunning ? 'Computing…' : 'Target CXp'}
-      </button>
+      <div className="xp-run-buttons">
+        {(['cxp', 'axp'] as const).map((target) => (
+          <button
+            key={target}
+            type="button"
+            className="action-button"
+            disabled={!hasEffectStates || isRunning}
+            onClick={() => handleRun(target)}
+          >
+            {runningTarget === target && <LoaderCircle size={16} className="spin" />}
+            {runningTarget === target ? 'Computing…' : ENUMERATIONS[target].label}
+          </button>
+        ))}
+      </div>
 
       <PercentageSlider
         label="Deviation from p₀"
