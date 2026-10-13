@@ -1,13 +1,11 @@
 import { init } from 'z3-solver';
 import type { Bool, Context, Optimize } from 'z3-solver';
 
-type Z3Api = Awaited<ReturnType<typeof init>>;
+let contextPromise: Promise<Context> | null = null;
 
-let z3Promise: Promise<Z3Api> | null = null;
-
-function loadZ3(): Promise<Z3Api> {
-  z3Promise ??= init();
-  return z3Promise;
+function loadContext(): Promise<Context> {
+  contextPromise ??= init().then(({ Context }) => Context('main'));
+  return contextPromise;
 }
 
 export class Hitman<T> {
@@ -18,6 +16,7 @@ export class Hitman<T> {
   private readonly objects: T[] = [];
   private readonly variables: Bool[] = [];
   private readonly variableIdByKey = new Map<unknown, number>();
+  private released = false;
 
   private constructor(ctx: Context, key: (object: T) => unknown) {
     this.ctx = ctx;
@@ -26,8 +25,7 @@ export class Hitman<T> {
   }
 
   static async create<T>(key: (object: T) => unknown = (object) => object): Promise<Hitman<T>> {
-    const { Context } = await loadZ3();
-    return new Hitman<T>(Context('main'), key);
+    return new Hitman<T>(await loadContext(), key);
   }
 
   get vector(): readonly T[] {
@@ -46,7 +44,6 @@ export class Hitman<T> {
     this.objects.push(object);
     this.variables.push(variable);
     this.variableIdByKey.set(objectKey, id);
-    // Prefer leaving every object out of the hitting set.
     this.optimizer.addSoft(this.ctx.Not(variable), 1);
     return id;
   }
@@ -73,6 +70,19 @@ export class Hitman<T> {
     }
 
     const model = this.optimizer.model();
-    return this.objects.filter((_, index) => this.ctx.isTrue(model.eval(this.variables[index], true)));
+    try {
+      return this.objects.filter((_, index) => this.ctx.isTrue(model.eval(this.variables[index], true)));
+    } finally {
+      model.release();
+    }
+  }
+
+  /// Explicitly free the optimizer function from memory
+  release(): void {
+    if (this.released) {
+      return;
+    }
+    this.released = true;
+    this.optimizer.release();
   }
 }
