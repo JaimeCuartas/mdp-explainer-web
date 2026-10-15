@@ -195,6 +195,7 @@ export function computeReachabilityPolicy(
       policy[state.id] = null;
     }
   }
+  console.log({...result, policy});
 
   return { ...result, policy };
 }

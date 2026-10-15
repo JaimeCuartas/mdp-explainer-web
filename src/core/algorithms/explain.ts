@@ -23,16 +23,22 @@ export function isAXp(
   const reachabilityOptions = { ...options, policyStateIds: new Set(candidate) };
 
   if (bound !== 'max') {
-    const minThreshold = p0 * (1 - deviation);
+    // const minThreshold = p0 * (1 - deviation);
+    const minThreshold = p0 - deviation;
     const minProb = computeReachabilityProbabilities(graph, 'min', reachabilityOptions).probabilities[initialState.id];
+    console.log(candidate);
+    console.log(`minProb = ${minProb} < minThreshold = ${minThreshold}`);
     if (minProb < minThreshold - THRESHOLD_SLACK) {
       return false;
     }
   }
 
   if (bound !== 'min') {
-    const maxThreshold = Math.min(1, p0 * (1 + deviation));
+    // const maxThreshold = Math.min(1, p0 * (1 + deviation));
+    const maxThreshold = Math.min(1, p0 + deviation);
     const maxProb = computeReachabilityProbabilities(graph, 'max', reachabilityOptions).probabilities[initialState.id];
+    console.log(candidate);
+    console.log(`maxProb = ${maxProb} < maxThreshold = ${maxThreshold}`);
     if (maxProb > maxThreshold + THRESHOLD_SLACK) {
       return false;
     }
