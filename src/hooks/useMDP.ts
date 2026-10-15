@@ -16,17 +16,27 @@ export const DEFAULT_NODE_SIZE: NodeSize = { width: 50, height: 50 };
 export const MIN_NODE_SIZE = 44;
 
 const DEFAULT_TITLE = 'Untitled MDP';
+const DEFAULT_STATE_LABEL = 's_0';
+const DEFAULT_STATE_POSITION: NodePosition = { x: 0, y: 0 };
 
 function generateId(prefix: string): string {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+// A new MDP starts with a single state labelled s_0.
+function createDefaultState(): MDPState {
+  return { id: generateId('s'), label: DEFAULT_STATE_LABEL };
+}
+
 export function useMDP() {
   const [title, setTitle] = useState<string>(DEFAULT_TITLE);
-  const [states, setStates] = useState<MDPState[]>([]);
+  const [defaultState] = useState(createDefaultState);
+  const [states, setStates] = useState<MDPState[]>([defaultState]);
   const [actions, setActions] = useState<MDPAction[]>([]);
   const [transitions, setTransitions] = useState<MDPTransition[]>([]);
-  const [nodePositions, setNodePositions] = useState<Record<string, NodePosition>>({});
+  const [nodePositions, setNodePositions] = useState<Record<string, NodePosition>>({
+    [defaultState.id]: DEFAULT_STATE_POSITION,
+  });
   const [nodeSizes, setNodeSizes] = useState<Record<string, NodeSize>>({});
   const [actionPositions, setActionPositions] = useState<Record<string, NodePosition>>({});
 
@@ -154,11 +164,12 @@ export function useMDP() {
   }, []);
 
   const resetMDP = useCallback((): void => {
+    const state = createDefaultState();
     setTitle(DEFAULT_TITLE);
-    setStates([]);
+    setStates([state]);
     setActions([]);
     setTransitions([]);
-    setNodePositions({});
+    setNodePositions({ [state.id]: DEFAULT_STATE_POSITION });
     setNodeSizes({});
     setActionPositions({});
   }, []);
