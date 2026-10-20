@@ -3,8 +3,8 @@ import { InlineMath } from 'react-katex';
 import { LoaderCircle } from 'lucide-react';
 import { enumerateXpsTargetAXps, enumerateXpsTargetCXps } from '../../core/algorithms/explain';
 import { buildMDPGraph } from '../../core/algorithms/mdpGraph';
-import { evaluatePolicyReachability } from '../../core/algorithms/reachability';
-import type { ExplanationBound, ExplanationResult } from '../../core/algorithms/types';
+import { loadReachabilitySolver } from '../../core/algorithms/reachabilityLP';
+import type { ExplanationBound, ExplanationResult, ReachabilityMethod } from '../../core/algorithms/types';
 import type { ExplanationHighlight, ExplanationKind } from '../../types/explanation';
 import type { MDPState, MDPAction, MDPTransition } from '../../types/mdp';
 import { ExplanationList } from './ExplanationList';
@@ -22,6 +22,13 @@ const BOUND_OPTIONS: readonly SegmentedOption<ExplanationBound>[] = [
   { value: 'both', label: 'Both (Range)' },
 ];
 const DEFAULT_BOUND: ExplanationBound = 'min';
+
+// How p0 and every isAXp check compute reachability; both give the same explanations.
+const METHOD_OPTIONS: readonly SegmentedOption<ReachabilityMethod>[] = [
+  { value: 'value-iteration', label: 'Value Iteration' },
+  { value: 'linear-programming', label: 'Linear Programming' },
+];
+const DEFAULT_METHOD: ReachabilityMethod = 'value-iteration';
 
 const ENUMERATIONS: Record<ExplanationKind, { label: string; enumerate: typeof enumerateXpsTargetCXps }> = {
   cxp: { label: 'Target CXp', enumerate: enumerateXpsTargetCXps },
@@ -51,6 +58,7 @@ export function ExplanationsPanel({
   const [error, setError] = useState<string | null>(null);
   const [deviationPercent, setDeviationPercent] = useState(DEFAULT_DEVIATION_PERCENT);
   const [bound, setBound] = useState<ExplanationBound>(DEFAULT_BOUND);
+  const [method, setMethod] = useState<ReachabilityMethod>(DEFAULT_METHOD);
 
   const hasEffectStates = states.some((state) => state.isTargetEffect);
   const labelById = new Map(states.map((state) => [state.id, state.label]));
@@ -79,10 +87,13 @@ export function ExplanationsPanel({
     onHighlightChange(null);
     try {
       const initialState = states.find((state) => state.isInitial) ?? states[0];
-      const reference = evaluatePolicyReachability(states, actions, transitions).probabilities[initialState.id];
-      const explanations = await ENUMERATIONS[target].enumerate(buildMDPGraph(states, actions, transitions), reference, {
+      const graph = buildMDPGraph(states, actions, transitions);
+      const solve = await loadReachabilitySolver(method);
+      const reference = solve(graph, 'policy').probabilities[initialState.id];
+      const explanations = await ENUMERATIONS[target].enumerate(graph, reference, {
         deviation: deviationPercent / 100,
         bound,
+        method,
       });
       setP0(reference);
       setResult(explanations);
@@ -127,6 +138,14 @@ export function ExplanationsPanel({
         value={bound}
         disabled={isRunning}
         onChange={setBound}
+      />
+
+      <SegmentedControl
+        label="Reachability solver"
+        options={METHOD_OPTIONS}
+        value={method}
+        disabled={isRunning}
+        onChange={setMethod}
       />
 
       {error && <p className="xp-error">{error}</p>}

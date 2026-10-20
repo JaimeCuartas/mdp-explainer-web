@@ -58,6 +58,9 @@ export interface ReachabilityResult extends ReachabilityProbabilities {
  */
 export type ExplanationBound = 'min' | 'max' | 'both';
 
+/** How reachability probabilities are computed: iterating the Bellman equations or solving them as a linear program. */
+export type ReachabilityMethod = 'value-iteration' | 'linear-programming';
+
 export interface ExplanationOptions extends ReachabilityOptions {
   /**
    * Allowed relative deviation from the reference probability p0: a candidate
@@ -67,6 +70,8 @@ export interface ExplanationOptions extends ReachabilityOptions {
   deviation?: number;
   /** Bounds that isAXp checks; defaults to 'min'. */
   bound?: ExplanationBound;
+  /** How the enumerations compute reachability; defaults to 'value-iteration'. */
+  method?: ReachabilityMethod;
 }
 
 export interface ReachabilityBounds {

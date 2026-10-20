@@ -1,6 +1,8 @@
 import { Hitman } from './hitman';
 import type { MDPGraph } from './mdpGraph';
 import { computeReachabilityProbabilities } from './reachability';
+import { loadReachabilitySolver } from './reachabilityLP';
+import type { ReachabilitySolver } from './reachabilityLP';
 import type { ExplanationBound, ExplanationOptions, ExplanationResult } from './types';
 
 const DEFAULT_DEVIATION = 0.2;
@@ -12,6 +14,7 @@ export function isAXp(
   candidate: readonly string[],
   p0: number,
   options: ExplanationOptions = {},
+  solve: ReachabilitySolver = computeReachabilityProbabilities,
 ): boolean {
   const initialState = graph.states.find((state) => state.isInitial) ?? graph.states[0];
   if (!initialState) {
@@ -25,7 +28,7 @@ export function isAXp(
   if (bound !== 'max') {
     // const minThreshold = p0 * (1 - deviation);
     const minThreshold = p0 - deviation;
-    const minProb = computeReachabilityProbabilities(graph, 'min', reachabilityOptions).probabilities[initialState.id];
+    const minProb = solve(graph, 'min', reachabilityOptions).probabilities[initialState.id];
     console.log(candidate);
     console.log(`minProb = ${minProb} < minThreshold = ${minThreshold}`);
     if (minProb < minThreshold - THRESHOLD_SLACK) {
@@ -36,7 +39,7 @@ export function isAXp(
   if (bound !== 'min') {
     // const maxThreshold = Math.min(1, p0 * (1 + deviation));
     const maxThreshold = Math.min(1, p0 + deviation);
-    const maxProb = computeReachabilityProbabilities(graph, 'max', reachabilityOptions).probabilities[initialState.id];
+    const maxProb = solve(graph, 'max', reachabilityOptions).probabilities[initialState.id];
     console.log(candidate);
     console.log(`maxProb = ${maxProb} < maxThreshold = ${maxThreshold}`);
     if (maxProb > maxThreshold + THRESHOLD_SLACK) {
@@ -52,16 +55,17 @@ export function shrink(
   candidate: readonly string[],
   p0: number,
   options: ExplanationOptions = {},
+  solve: ReachabilitySolver = computeReachabilityProbabilities,
 ): string[] {
   let currentCandidate = [...candidate];
 
-  if (!isAXp(graph, currentCandidate, p0, options)) {
+  if (!isAXp(graph, currentCandidate, p0, options, solve)) {
     return [];
   }
 
   for (const stateId of candidate) {
     const reducedCandidate = currentCandidate.filter((id) => id !== stateId);
-    if (isAXp(graph, reducedCandidate, p0, options)) {
+    if (isAXp(graph, reducedCandidate, p0, options, solve)) {
       currentCandidate = reducedCandidate;
     }
   }
@@ -75,11 +79,12 @@ export function grow(
   allNonEffectIds: readonly string[],
   p0: number,
   options: ExplanationOptions = {},
+  solve: ReachabilitySolver = computeReachabilityProbabilities,
 ): string[] {
   const candidateSet = new Set(candidate);
   const initialFixedIds = allNonEffectIds.filter((id) => !candidateSet.has(id));
 
-  if (isAXp(graph, initialFixedIds, p0, options)) {
+  if (isAXp(graph, initialFixedIds, p0, options, solve)) {
     return [];
   }
 
@@ -87,7 +92,7 @@ export function grow(
   const minimalCXp: string[] = [];
 
   for (const stateId of candidate) {
-    if (!isAXp(graph, [...fixedSet, stateId], p0, options)) {
+    if (!isAXp(graph, [...fixedSet, stateId], p0, options, solve)) {
       fixedSet.add(stateId);
     } else {
       minimalCXp.push(stateId);
@@ -107,6 +112,7 @@ export async function enumerateXpsTargetCXps(
   const axps: string[][] = [];
   const cxps: string[][] = [];
 
+  const solve = await loadReachabilitySolver(options.method);
   const hitman = await Hitman.create<string>();
   try {
     for (;;) {
@@ -118,8 +124,8 @@ export async function enumerateXpsTargetCXps(
       const candidateIds = new Set(candidate);
       const complement = nonEffectStateIds.filter((id) => !candidateIds.has(id));
 
-      if (isAXp(graph, complement, p0, options)) {
-        const axp = shrink(graph, complement, p0, options);
+      if (isAXp(graph, complement, p0, options, solve)) {
+        const axp = shrink(graph, complement, p0, options, solve);
         axps.push(axp);
         hitman.hit(axp);
       } else {
@@ -144,6 +150,7 @@ export async function enumerateXpsTargetAXps(
   const axps: string[][] = [];
   const cxps: string[][] = [];
 
+  const solve = await loadReachabilitySolver(options.method);
   const hitman = await Hitman.create<string>();
   try {
     for (;;) {
@@ -152,14 +159,14 @@ export async function enumerateXpsTargetAXps(
         break;
       }
 
-      if (isAXp(graph, candidate, p0, options)) {
+      if (isAXp(graph, candidate, p0, options, solve)) {
         axps.push(candidate);
         hitman.block(candidate);
       } else {
         const candidateSet = new Set(candidate);
         const complement = nonEffectStateIds.filter((id) => !candidateSet.has(id));
 
-        const cxp = grow(graph, complement,nonEffectStateIds, p0, options);
+        const cxp = grow(graph, complement, nonEffectStateIds, p0, options, solve);
         cxps.push(cxp);
         hitman.hit(cxp);
       }
