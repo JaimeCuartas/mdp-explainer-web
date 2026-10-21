@@ -64,7 +64,7 @@ export function buildMiniZincDzn(
 ): string {
   const usedIdentifiers = new Set<string>();
   const stateNames = buildUniqueIdentifiers(
-    states.map((state) => state.label+state.id),
+    states.map((state) => state.label),
     usedIdentifiers
   );
 
