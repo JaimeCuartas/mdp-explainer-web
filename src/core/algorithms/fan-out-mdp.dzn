@@ -1,0 +1,190 @@
+states  = {s_0s0,b_1b1,b_2b2,b_3b3,b_4b4,b_5b5,b_6b6,b_7b7,b_8b8,b_9b9,b_10b10,goalgoal,sinksink};
+actions = {go,goal,sink};
+
+init_state = s_0s0;
+effect_states = {goalgoal};
+
+
+candidate = {b_2b2,b_3b3,b_4b4,b_5b5,b_6b6,b_7b7,b_8b8,b_9b9,b_10b10};
+
+P = array3d(states,actions,states,[
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+]);
+
+policy = [|
+    % go , goal, sink
+      1.0, 0.0 , 0.0  | % s_0s0 (s_0)
+      0.0, 0.5 , 0.5  | % b_1b1 (b_{1})
+      0.0, 0.5 , 0.5  | % b_2b2 (b_{2})
+      0.0, 0.5 , 0.5  | % b_3b3 (b_{3})
+      0.0, 0.5 , 0.5  | % b_4b4 (b_{4})
+      0.0, 0.5 , 0.5  | % b_5b5 (b_{5})
+      0.0, 0.5 , 0.5  | % b_6b6 (b_{6})
+      0.0, 0.5 , 0.5  | % b_7b7 (b_{7})
+      0.0, 0.5 , 0.5  | % b_8b8 (b_{8})
+      0.0, 0.5 , 0.5  | % b_9b9 (b_{9})
+      0.0, 0.5 , 0.5  | % b_10b10 (b_{10})
+      0.0, 0.0 , 0.0  | % goalgoal (\text{goal}, effect state, no actions)
+      0.0, 0.0 , 0.0    % sinksink (\text{sink}, no actions)
+|];
+
+R = array3d(states,actions,states,[
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    %s_0s0     b_1b1     b_2b2     b_3b3     b_4b4     b_5b5     b_6b6     b_7b7     b_8b8     b_9b9     b_10b10   goalgoal  sinksink  
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+]);
+
+g = 1.0;
+

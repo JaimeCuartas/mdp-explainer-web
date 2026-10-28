@@ -67,12 +67,7 @@ array[states] of set of actions: enabled =
 array[states, states] of float: P_pi =
     array2d(states, states, [ sum(act in actions)(policy[s, act] * P[s, act, t]) | s, t in states ]);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% S0: states whose min reachability is 0. T is the least set containing the
-% effect states and every state that is forced to move into T with positive
-% probability: a state of X if its policy mixture can reach T, a free state if
-% it has actions and every one of them can reach T. Computed on the data, so it
-% adds nothing non-linear to the model.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function set of states: forced_closure(set of states: T) =
     let {

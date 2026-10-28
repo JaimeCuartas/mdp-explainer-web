@@ -1,0 +1,9 @@
+output ["\"output\": {","\"default\": ",showJSON(concat(["States: ",_toString_states([s | s in states],false,false),"\n","AXp: ",_toString_states([s | s in candidate],false,false),"\n","[",show(reach_min[init_state]),"\n",show([lambda[s] | s in states]),"\n","]\n"])),", \"raw\": ",showJSON(concat(["States: ",_toString_states([s | s in states],false,false),"\n","AXp: ",_toString_states([s | s in candidate],false,false),"\n","[",show(reach_min[init_state]),"\n",show([lambda[s] | s in states]),"\n","]\n"])),"}, \"sections\": [\"default\", \"raw\"]"];
+function string : _toString_states(array [$U] of opt states: X_INTRODUCED_9_,bool: X_INTRODUCED_10_,bool: X_INTRODUCED_11_) = let {array [int] of opt states: X_INTRODUCED_12_ = array1d(X_INTRODUCED_9_)} in (("["++join(", ",[_toString_states(X_INTRODUCED_12_[X_INTRODUCED_13_],X_INTRODUCED_10_,X_INTRODUCED_11_) | X_INTRODUCED_13_ in index_set(X_INTRODUCED_12_)]))++"]");
+function string : _toString_states(opt int: X_INTRODUCED_6_,bool: X_INTRODUCED_7_,bool: X_INTRODUCED_8_) = if occurs(X_INTRODUCED_6_) then if X_INTRODUCED_7_ then showDznId(_enum_to_string_0_states[deopt(X_INTRODUCED_6_)]) elseif X_INTRODUCED_8_ then ("{\"e\":"++show(_enum_to_string_0_states[deopt(X_INTRODUCED_6_)]))++"}" else _enum_to_string_0_states[deopt(X_INTRODUCED_6_)] endif else if X_INTRODUCED_8_ then "null" else "<>" endif endif;
+set of int: states = 1..13;
+array [states] of float: lambda;
+array [states] of float: reach_min;
+int: init_state = 1;
+array [1..13] of string: _enum_to_string_0_states = ["s_0s0","b_1b1","b_2b2","b_3b3","b_4b4","b_5b5","b_6b6","b_7b7","b_8b8","b_9b9","b_10b10","goalgoal","sinksink"];
+set of int: candidate = 3..11;
