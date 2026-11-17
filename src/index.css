@@ -346,12 +346,12 @@ body, html, #root {
 }
 
 .xp-run-buttons {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
 .xp-run-buttons .action-button {
-  flex: 1;
   min-width: 0;
 }
 

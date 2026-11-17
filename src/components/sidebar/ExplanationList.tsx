@@ -7,7 +7,8 @@ interface ExplanationListProps {
   title: string;
   variant: ExplanationKind;
   sets: string[][];
-  labelOf: (stateId: string) => string;
+  /** Label of a state in the set at `setIndex` (an inflated result shows each set's levels). */
+  labelOf: (stateId: string, setIndex: number) => string;
   selectedIndex: number | null;
   onSelect: (index: number) => void;
 }
@@ -50,7 +51,7 @@ export function ExplanationList({ title, variant, sets, labelOf, selectedIndex, 
                   ) : (
                     set.map((stateId) => (
                       <span key={stateId} className="xp-chip">
-                        <InlineMath math={labelOf(stateId)} />
+                        <InlineMath math={labelOf(stateId, index)} />
                       </span>
                     ))
                   )}
